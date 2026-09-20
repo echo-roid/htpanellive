@@ -1,0 +1,26 @@
+.activetabbar::after{
+  position: absolute;
+  right: -23px;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 3px;
+  background-color: #3F8CFF;
+  content: "";
+}
+
+
+.activetabbar2::after {
+  position: absolute;
+  right: -15px;
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  width: 3px;
+  background-color: #3F8CFF;
+  content: "";
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
