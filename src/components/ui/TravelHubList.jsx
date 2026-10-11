@@ -72,7 +72,7 @@ const selectedformid = location.state?.selectedformid;
       }
 
       // Fetch form submissions
-      const res = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${selectedformid}/submissions`);
+      const res = await axios.get(`http://localhost:5000/api/forms/${selectedformid}/submissions`);
       
       if (res.data && res.data.success && res.data.submissions && res.data.submissions.length > 0) {
         const apiSubmissions = res.data.submissions;

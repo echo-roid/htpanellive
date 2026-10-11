@@ -35,7 +35,7 @@ ChartJS.register(
   RadialLinearScale
 );
 
-const COMPANY_API_URL = "https://tableware-dweeb-estate.ngrok-free.dev/api/contacts";
+const COMPANY_API_URL = "http://localhost:5000/api/contacts";
 
 // Masking utility functions
 const maskEmail = (email) => {

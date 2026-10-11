@@ -22,7 +22,7 @@ const SalarySlip = ({ employee, month, year, onClose }) => {
       
       setLoading(true);
       try {
-        const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/employees/${employee.empCode}`);
+        const response = await fetch(`http://localhost:5000/api/employees/${employee.empCode}`);
         const data = await response.json();
         if (data) {
           setEmployeeDetails(data);
@@ -41,7 +41,7 @@ const SalarySlip = ({ employee, month, year, onClose }) => {
   useEffect(() => {
     const fetchLeaveSettings = async () => {
       try {
-        const res = await axios.get('https://tableware-dweeb-estate.ngrok-free.dev/api/leave-settings/leave-settings');
+        const res = await axios.get('http://localhost:5000/api/leave-settings/leave-settings');
         setLeaveSettings(res.data);
         console.log("✅ Leave settings loaded:", res.data);
       } catch (err) {

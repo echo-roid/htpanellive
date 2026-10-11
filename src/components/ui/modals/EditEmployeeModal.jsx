@@ -46,7 +46,7 @@ export default function EditEmployeeModal({ onClose, employee }) {
   ];
 
   useEffect(() => {
-    fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/employees/allmanagers/")
+    fetch("http://localhost:5000/api/employees/allmanagers/")
       .then((res) => res.json())
       .then((data) => setManagers(data || []))
       .catch((err) => console.error("Error fetching managers:", err.message));
@@ -79,7 +79,7 @@ export default function EditEmployeeModal({ onClose, employee }) {
 
     try {
       const response = await fetch(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/employees/employees/${formData.id}`,
+        `http://localhost:5000/api/employees/employees/${formData.id}`,
         {
           method: "PUT", // 👈 update API
           body: submitData,

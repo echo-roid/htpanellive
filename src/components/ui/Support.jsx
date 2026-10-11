@@ -181,7 +181,7 @@ export default function InsurancePageFixedTable() {
     const fetchForms = async () => {
         try {
             setFormsLoading(true);
-            const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/lead/${id}`);
+            const response = await fetch(`http://localhost:5000/api/forms/lead/${id}`);
             const data = await response.json();
 
             if (!response.ok) {
@@ -201,7 +201,7 @@ export default function InsurancePageFixedTable() {
         try {
             setLoading(true);
             const submissionPromises = selectedForms.map(formId => 
-                fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${formId}/submissions`).then(res => res.json())
+                fetch(`http://localhost:5000/api/forms/${formId}/submissions`).then(res => res.json())
             );
 
             const submissionsData = await Promise.all(submissionPromises);

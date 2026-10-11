@@ -623,7 +623,7 @@ export default function HotelRoomListing() {
     // Assign hotel to PNR
     const assignHotelToPNR = async (pnrId, hotelData) => {
         try {
-            const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+            const API_BASE_URL = 'http://localhost:5000/api';
             const url = `${API_BASE_URL}/vendors/pnr/${pnrId}/hotels`;
             
             console.log('Sending hotel assignment to:', url);
@@ -1401,7 +1401,7 @@ export default function HotelRoomListing() {
             setPnrLoading(true);
             setPnrError("");
             console.log(`Fetching PNR passengers for lead ID: ${id}`);
-            const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/hotels/done-passengers/lead/${id}`);
+            const response = await fetch(`http://localhost:5000/api/hotels/done-passengers/lead/${id}`);
             const data = await response.json();
 
             if (!response.ok) {
@@ -1444,7 +1444,7 @@ export default function HotelRoomListing() {
     const fetchAvailableHotels = async () => {
         try {
             setHotelsLoading(true);
-            const response = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/vendors/hotels');
+            const response = await fetch('http://localhost:5000/api/vendors/hotels');
             const data = await response.json();
             
             if (!response.ok) {

@@ -19,7 +19,7 @@ const FormsByLead = () => {
   const handleCloneForm = async (formId) => {
   if (window.confirm('Are you sure you want to clone this form?')) {
     try {
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${formId}/clone`, {
+      const response = await fetch(`http://localhost:5000/api/forms/${formId}/clone`, {
         method: 'POST'
       });
       const data = await response.json();
@@ -47,7 +47,7 @@ const FormsByLead = () => {
     try {
       setLoadingId(formId);
 
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/forms/${formId}`, {
+      const response = await fetch(`http://localhost:5000/api/forms/forms/${formId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -74,7 +74,7 @@ const FormsByLead = () => {
     const fetchForms = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/lead/${id}`);
+        const response = await fetch(`http://localhost:5000/api/forms/lead/${id}`);
         const data = await response.json();
 
         if (!response.ok) {

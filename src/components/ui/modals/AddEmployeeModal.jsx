@@ -178,7 +178,7 @@ export default function AddEmployeeModal({ onClose, employee }) {
 
   // Fetch leave settings from API - Updated to use the correct endpoint
   useEffect(() => {
-    fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/leave-settings/leave-settings")
+    fetch("http://localhost:5000/api/leave-settings/leave-settings")
       .then((res) => res.json())
       .then((data) => {
         if (data) {
@@ -252,7 +252,7 @@ export default function AddEmployeeModal({ onClose, employee }) {
         ]);
       });
 
-    fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/employees/allmanagers/")
+    fetch("http://localhost:5000/api/employees/allmanagers/")
       .then((res) => res.json())
       .then((data) => {
         setManagers(data || []);
@@ -448,7 +448,7 @@ export default function AddEmployeeModal({ onClose, employee }) {
     submitData.append("leave_quotas", JSON.stringify(leaveQuotas));
 
     try {
-      const url = "https://tableware-dweeb-estate.ngrok-free.dev/api/employees";
+      const url = "http://localhost:5000/api/employees";
       
       if (formData.empId) {
         const response = await fetch(`${url}`, {

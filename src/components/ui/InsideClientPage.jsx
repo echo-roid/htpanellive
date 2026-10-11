@@ -59,7 +59,7 @@ const InsideClientPage = () => {
   const fetchClientLeads = async () => {
     setLoadingLeads(true);
     try {
-      const response = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/leads");
+      const response = await fetch("http://localhost:5000/api/leads");
       const data = await response.json();
 
       const clientLeads = data.filter(
@@ -79,7 +79,7 @@ const InsideClientPage = () => {
     setLoadingContacts(true);
     setContactError(null);
     try {
-      const response = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/contacts");
+      const response = await fetch("http://localhost:5000/api/contacts");
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -135,7 +135,7 @@ const InsideClientPage = () => {
 
   useEffect(() => {
     if (client_type !== "individual") {
-      fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/divisions/$${parent_clinte_code}`)
+      fetch(`http://localhost:5000/api/divisions/$${parent_clinte_code}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setDivisions(data.data);
@@ -157,7 +157,7 @@ const InsideClientPage = () => {
   const handleAddDivision = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/divisions", {
+      const res = await fetch("http://localhost:5000/api/divisions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

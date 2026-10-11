@@ -43,7 +43,7 @@ export default function Addproject({ onClose }) {
     
   
     try {
-      const response = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/projects", {
+      const response = await fetch("http://localhost:5000/api/projects", {
         method: "POST",
         body: submitData,
       });

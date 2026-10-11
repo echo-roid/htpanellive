@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // --- API Configuration ---
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
 
 // --- fetchPassengerData with Lead ID ---
 const fetchPassengerData = async (leadID, page = 1, limit = 10, sortBy = 'pax_code', sortOrder = 'ASC') => {

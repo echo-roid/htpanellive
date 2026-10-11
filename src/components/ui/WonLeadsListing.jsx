@@ -472,7 +472,7 @@ const WonLeadsListing = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await axios.get('https://tableware-dweeb-estate.ngrok-free.dev/api/leads/won');
+      const response = await axios.get('http://localhost:5000/api/leads/won');
       setLeads(response.data);
     } catch (error) {
       console.error('Error fetching won leads:', error);

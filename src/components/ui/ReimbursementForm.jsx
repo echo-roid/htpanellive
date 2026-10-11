@@ -31,7 +31,7 @@ const ReimbursementForm = () => {
   useEffect(() => {
     const fetchManagers = async () => {
       try {
-        const response = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/employees/allmanagers");
+        const response = await fetch("http://localhost:5000/api/employees/allmanagers");
         if (!response.ok) throw new Error("Failed to fetch managers");
         const data = await response.json();
         setManagers(data);
@@ -113,7 +113,7 @@ const ReimbursementForm = () => {
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
 
-      const response = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/upload", {
+      const response = await fetch("http://localhost:5000/api/upload", {
         method: "POST",
         body: formDataUpload,
       });
@@ -137,7 +137,7 @@ const ReimbursementForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/reimbursements", {
+      const response = await fetch("http://localhost:5000/api/reimbursements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

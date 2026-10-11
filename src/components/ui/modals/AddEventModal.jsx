@@ -42,7 +42,7 @@ const AddEventModal = ({ onClose, onEventAdded, currentDate }) => {
     useEffect(() => {
         const fetchLeads = async () => {
             try {
-                const response = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/leads/won');
+                const response = await fetch('http://localhost:5000/api/leads/won');
                 if (!response.ok) throw new Error('Failed to fetch leads');
                 const data = await response.json();
                 setLeads(Array.isArray(data) ? data : []);
@@ -132,11 +132,11 @@ const AddEventModal = ({ onClose, onEventAdded, currentDate }) => {
             organizer_id: user?.employee?.id,
         };
 
-        let url = "https://tableware-dweeb-estate.ngrok-free.dev/api/calendar"; // default for meetings
+        let url = "http://localhost:5000/api/calendar"; // default for meetings
 
         if (isCorporate) {
             // --- Corporate event payload ---
-            url = `https://tableware-dweeb-estate.ngrok-free.dev/api/leave/request/corporate-events/${user?.employee?.id}`;
+            url = `http://localhost:5000/api/leave/request/corporate-events/${user?.employee?.id}`;
             payload.start_date = eventData.start_date;          // YYYY-MM-DD
             payload.end_date = eventData.end_date;              // YYYY-MM-DD
             payload.lead_id = selectedLeadId || null;

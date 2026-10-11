@@ -724,7 +724,7 @@ const PNRListing = ({
   fetchPassengers,
   fetchJourneys
 }) => {
-  const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+  const API_BASE_URL = 'http://localhost:5000/api';
   
   // State management
   const [pnrList, setPnrList] = useState([]);

@@ -12,7 +12,7 @@ export default function AttendanceCard({ record }) {
       <div className="p-6">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 flex gap-3 items-center">{record.employee_name} <img src={`https://tableware-dweeb-estate.ngrok-free.dev/uploads/${record?.employee_photo}`} className="w-8 h-8 rounded-full" alt="" /></h3>
+            <h3 className="text-sm font-semibold text-gray-900 flex gap-3 items-center">{record.employee_name} <img src={`http://localhost:5000/uploads/${record?.employee_photo}`} className="w-8 h-8 rounded-full" alt="" /></h3>
             <p className="text-sm text-gray-500">{record.designation}</p>
           </div>
           <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusColors[record.status]}`}>

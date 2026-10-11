@@ -65,6 +65,8 @@ import Uploadticket from "./components/ui/Uploadticket"
 import CorporateNotifications from "./components/ui/CorporateNotifications"
 import SalarySlip from "./components/ui/SalarySlip"
 import PnrRemovalHistory from "./components/ui/PnrRemovalHistory"
+import GuideLogin from './components/ui/GuideLogin';
+import GuidePanel from './components/ui/GuidePanel';
 export default function Routers() {
 
 
@@ -151,6 +153,8 @@ export default function Routers() {
         <Route path="/operations/EditFormPage/:shareId" element={<EditFormPage />} />
         <Route path="/SharedFormView/:shareId" element={<SharedFormView />} />
         <Route path="/QCPage" element={<QCPage />} />
+        <Route path="/guide-login" element={<GuideLogin />} />
+       <Route path="/guide-panel" element={<GuidePanel />} />
       </Routes>
     </BrowserRouter>
   );

@@ -36,7 +36,7 @@ export default function Addtask({ onClose }) {
       submitData.append(key, formData[key]);
     }
     try {
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/tasks`, {
+      const response = await fetch(`http://localhost:5000/api/tasks`, {
         method: "POST",
         body: submitData,
       });

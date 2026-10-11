@@ -7,7 +7,7 @@ const MonthlyAttendanceTable = ({ month, year }) => {
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const res = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/attendance/monthly-attendance?month=${month}&year=${year}`);
+        const res = await fetch(`http://localhost:5000/api/attendance/monthly-attendance?month=${month}&year=${year}`);
         const data = await res.json();
         setAttendanceData(data.data || []);
       } catch (err) {

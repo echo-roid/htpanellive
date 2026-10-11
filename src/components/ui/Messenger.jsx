@@ -37,7 +37,7 @@ const Messenger = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/rooms?userId=${organizerId}`
+          `http://localhost:5000/api/chat/rooms?userId=${organizerId}`
         );
         const data = await response.json();
         if (data.success) {
@@ -61,7 +61,7 @@ const Messenger = () => {
       setLoading(true);
       try {
         const response = await fetch(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/rooms/${activeRoom.id}/messages?userId=${organizerId}`
+          `http://localhost:5000/api/chat/rooms/${activeRoom.id}/messages?userId=${organizerId}`
         );
         const data = await response.json();
         if (data.success) {
@@ -75,7 +75,7 @@ const Messenger = () => {
           await Promise.all(
             unreadMessages.map((msg) =>
               fetch(
-                `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/messages/${msg.id}/read?userId=${organizerId}`,
+                `http://localhost:5000/api/chat/messages/${msg.id}/read?userId=${organizerId}`,
                 { method: "PUT" }
               )
             )
@@ -105,7 +105,7 @@ const Messenger = () => {
     try {
       if (editId) {
         const response = await fetch(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/messages/${editId}?userId=${organizerId}`,
+          `http://localhost:5000/api/chat/messages/${editId}?userId=${organizerId}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -122,7 +122,7 @@ const Messenger = () => {
         }
       } else {
         const response = await fetch(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/rooms/${activeRoom.id}/messages?userId=${organizerId}`,
+          `http://localhost:5000/api/chat/rooms/${activeRoom.id}/messages?userId=${organizerId}`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -145,7 +145,7 @@ const Messenger = () => {
 
     try {
       const response = await fetch(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/messages/${id}?userId=${organizerId}`,
+        `http://localhost:5000/api/chat/messages/${id}?userId=${organizerId}`,
         { method: "DELETE" }
       );
       const data = await response.json();
@@ -175,7 +175,7 @@ const Messenger = () => {
       if (newRoomImageFile) {
         const formData = new FormData();
         formData.append("file", newRoomImageFile);
-        const uploadResponse = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/upload", {
+        const uploadResponse = await fetch("http://localhost:5000/api/upload", {
           method: "POST",
           body: formData,
         });
@@ -184,8 +184,8 @@ const Messenger = () => {
       }
 
       const url = activeRoom
-        ? `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/rooms/${activeRoom.id}?userId=${organizerId}`
-        : `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/rooms?userId=${organizerId}`;
+        ? `http://localhost:5000/api/chat/rooms/${activeRoom.id}?userId=${organizerId}`
+        : `http://localhost:5000/api/chat/rooms?userId=${organizerId}`;
 
       const method = activeRoom ? "PUT" : "POST";
 
@@ -227,7 +227,7 @@ const Messenger = () => {
 
     try {
       const response = await fetch(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/rooms/${id}?userId=${organizerId}`,
+        `http://localhost:5000/api/chat/rooms/${id}?userId=${organizerId}`,
         { method: "DELETE" }
       );
       const data = await response.json();
@@ -265,7 +265,7 @@ const Messenger = () => {
     
     try {
       const response = await fetch(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/chat/rooms/${selectedRoom.id}/participants/${memberId}?userId=${organizerId}`,
+        `http://localhost:5000/api/chat/rooms/${selectedRoom.id}/participants/${memberId}?userId=${organizerId}`,
         { method: "DELETE" }
       );
       
@@ -425,7 +425,7 @@ const Messenger = () => {
                     >
                       {msg.sender_avatar ? (
                         <img
-                          src={`https://tableware-dweeb-estate.ngrok-free.dev/uploads/${msg.sender_avatar}`}
+                          src={`http://localhost:5000/uploads/${msg.sender_avatar}`}
                           alt="avatar"
                           className="w-10 h-10 rounded-full"
                         />
@@ -740,7 +740,7 @@ const Messenger = () => {
                     <div className="flex items-center gap-2">
                       {member.photo ? (
                         <img 
-                          src={`https://tableware-dweeb-estate.ngrok-free.dev/uploads/${member.photo}`} 
+                          src={`http://localhost:5000/uploads/${member.photo}`} 
                           alt={member.name} 
                           className="w-10 h-10 rounded-full object-cover"
                         />

@@ -25,7 +25,7 @@ export default function Home() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks?userId=${organizerId}`);
+        const res = await fetch(`http://localhost:5000/api/tasks/tasks?userId=${organizerId}`);
         if (!res.ok) throw new Error("Failed to fetch tasks");
         const data = await res.json();
         setTasks(data.tasks || []);
@@ -38,7 +38,7 @@ export default function Home() {
   
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
-      const res = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks/${taskId}/status?userId=${organizerId}`, {
+      const res = await fetch(`http://localhost:5000/api/tasks/tasks/${taskId}/status?userId=${organizerId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
@@ -193,7 +193,7 @@ const NearestEvents = () => {
     const fetchCalendarEvents = async () => {
       try {
         const response = await fetch(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/calendar?month=${currentMonth}&year=${currentYear}`
+          `http://localhost:5000/api/calendar?month=${currentMonth}&year=${currentYear}`
         );
         if (!response.ok) throw new Error("Failed to fetch calendar events");
         const data = await response.json();
@@ -206,7 +206,7 @@ const NearestEvents = () => {
     const fetchMeetings = async () => {
       try {
         const response = await fetch(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/calendar/meetings/?organizer_id=${organizerId}&email=${user?.employee?.email}`
+          `http://localhost:5000/api/calendar/meetings/?organizer_id=${organizerId}&email=${user?.employee?.email}`
         );
         const result = await response.json();
         if (result.success) {
@@ -319,7 +319,7 @@ const SendTaskNotification = ({ task, onClose }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks/send-notification', {
+      const response = await fetch('http://localhost:5000/api/tasks/tasks/send-notification', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task_id: task.id, ...notificationData })

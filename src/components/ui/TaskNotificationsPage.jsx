@@ -28,7 +28,7 @@ const TaskNotificationsPage = () => {
     const fetchTaskNotifications = async () => {
       try {
         const response = await fetch(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks/notifyGet?userId=${user?.employee?.id}`
+          `http://localhost:5000/api/tasks/tasks/notifyGet?userId=${user?.employee?.id}`
         );
         if (!response.ok) throw new Error("Failed to fetch task notifications");
         const data = await response.json();

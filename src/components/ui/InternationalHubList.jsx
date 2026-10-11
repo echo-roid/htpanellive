@@ -69,7 +69,7 @@ export default function InternationalHubList() {
   const fetchSubmissionsData = async () => {
     try {
       setSubmissionsLoading(true);
-      const res = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${formId}/submissions`);
+      const res = await axios.get(`http://localhost:5000/api/forms/${formId}/submissions`);
       
       if (res.data && res.data.success && res.data.submissions && res.data.submissions.length > 0) {
         const apiSubmissions = res.data.submissions;

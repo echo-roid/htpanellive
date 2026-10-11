@@ -25,7 +25,7 @@ const ApproveLeaveTable = () => {
       try {
         const { startDate, endDate } = getCurrentMonthRange();
         const params = new URLSearchParams({ startDate, endDate });
-        const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/leave/all?${params}`);
+        const response = await fetch(`http://localhost:5000/api/leave/all?${params}`);
         const data = await response.json();
         
         // Handle both array and paginated responses

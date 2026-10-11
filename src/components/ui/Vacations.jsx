@@ -18,7 +18,7 @@ export const fetchLeaves = async ({ status, department, startDate, endDate } = {
       queryParams.append("endDate", endDate);
     }
 
-    const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/leave/all?${queryParams.toString()}`);
+    const response = await fetch(`http://localhost:5000/api/leave/all?${queryParams.toString()}`);
     
     if (!response.ok) {
       throw new Error("Failed to fetch leave records");
@@ -34,7 +34,7 @@ export const fetchLeaves = async ({ status, department, startDate, endDate } = {
 
 export const cancelLeave = async (leaveId) => {
   try {
-    const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/leave/${leaveId}/cancel`, {
+    const response = await fetch(`http://localhost:5000/api/leave/${leaveId}/cancel`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

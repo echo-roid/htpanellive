@@ -3,7 +3,7 @@ import axios from 'axios';
 export default {
   fetchAttendance: async (params = {}) => {
     try {
-      const response = await axios.get('https://tableware-dweeb-estate.ngrok-free.dev/api/attendance', { params });
+      const response = await axios.get('http://localhost:5000/api/attendance', { params });
       return response.data;
     } catch (error) {
       console.error('Error fetching attendance:', error);
@@ -13,7 +13,7 @@ export default {
 
   checkIn: async (data) => {
     try {
-      const response = await axios.post('https://tableware-dweeb-estate.ngrok-free.dev/api/attendance/check-in', data, {
+      const response = await axios.post('http://localhost:5000/api/attendance/check-in', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -27,7 +27,7 @@ export default {
 
   checkOut: async (data) => {
     try {
-      const response = await axios.post('https://tableware-dweeb-estate.ngrok-free.dev/api/attendance/check-out', data, {
+      const response = await axios.post('http://localhost:5000/api/attendance/check-out', data, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

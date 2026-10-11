@@ -24,7 +24,7 @@ const VendorSelection = () => {
   const fetchVendors = async (page = 1, search = '') => {
     setLoading(true);
     try {
-      const response = await axios.get('https://tableware-dweeb-estate.ngrok-free.dev/api/vendors', {
+      const response = await axios.get('http://localhost:5000/api/vendors', {
         params: { page, limit: 10, search }
       });
       
@@ -45,7 +45,7 @@ const VendorSelection = () => {
   // Fetch already selected operation vendors for this lead
   const fetchOperationVendors = async () => {
     try {
-      const response = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/Operation/operation-vendors/lead/${leadId}`);
+      const response = await axios.get(`http://localhost:5000/api/Operation/operation-vendors/lead/${leadId}`);
       if (response.data.success) {
         setOperationVendors(response.data.data);
         
@@ -72,7 +72,7 @@ const VendorSelection = () => {
   // Check which vendors are already in operation_vendors
   const checkExistingVendors = async (vendorsList) => {
     try {
-      const response = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/Operation/operation-vendors/lead/${leadId}`);
+      const response = await axios.get(`http://localhost:5000/api/Operation/operation-vendors/lead/${leadId}`);
       if (response.data.success) {
         const operationVendorsList = response.data.data;
         setOperationVendors(operationVendorsList);
@@ -142,7 +142,7 @@ const VendorSelection = () => {
       };
 
       const response = await axios.post(
-        'https://tableware-dweeb-estate.ngrok-free.dev/api/Operation/operation-vendors',
+        'http://localhost:5000/api/Operation/operation-vendors',
         operationVendorData
       );
 
@@ -192,7 +192,7 @@ const VendorSelection = () => {
     
     try {
       const response = await axios.delete(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/Operation/operation-vendors/${operationVendorId}`
+        `http://localhost:5000/api/Operation/operation-vendors/${operationVendorId}`
       );
 
       if (response.data.success) {

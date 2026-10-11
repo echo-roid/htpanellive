@@ -12,7 +12,7 @@ const SubmissionViewer = () => {
   useEffect(() => {
     const fetchSubmission = async () => {
       try {
-        const response = await axios.get('https://tableware-dweeb-estate.ngrok-free.dev/api/forms/submissions/7');
+        const response = await axios.get('http://localhost:5000/api/forms/submissions/7');
         
         if (!response.data.success || !response.data.submission) {
           throw new Error('Invalid submission data received');
@@ -80,7 +80,7 @@ const SubmissionViewer = () => {
     try {
       // First update the entire submission data
       const updateResponse = await axios.put(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/forms/submissions/${submission.id}`,
+        `http://localhost:5000/api/forms/submissions/${submission.id}`,
         { data: formData }
       );
       
@@ -90,7 +90,7 @@ const SubmissionViewer = () => {
           formData.map(async (field, index) => {
             try {
               const response = await axios.put(
-                `https://tableware-dweeb-estate.ngrok-free.dev/api/submissions/${submission.id}/edit-value`,
+                `http://localhost:5000/api/submissions/${submission.id}/edit-value`,
                 {
                   fieldId: field.field_id,
                   newValue: field.value

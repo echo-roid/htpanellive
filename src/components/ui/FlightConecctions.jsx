@@ -154,7 +154,7 @@ export default function TravelMap() {
     passengerCodes: []
   });
 
-  const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+  const API_BASE_URL = 'http://localhost:5000/api';
   const [wonLead, setWonLead] = useState(null);
 
   const [dashboardStats, setDashboardStats] = useState({
@@ -523,7 +523,7 @@ export default function TravelMap() {
   const fetchSubmissions = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${91}/submissions`);
+      const res = await axios.get(`http://localhost:5000/api/forms/${91}/submissions`);
       
       if (res.data?.success && safeArray(res.data.submissions).length > 0) {
         const apiSubmissions = res.data.submissions;
@@ -577,7 +577,7 @@ export default function TravelMap() {
   const fetchGuestListData = async () => {
     try {
       const { data: res } = await axios.get(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/guestlist`
+        `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist`
       );
 
       if (res?.guestData && Array.isArray(res.guestData)) {
@@ -653,7 +653,7 @@ const fetchForms = async () => {
       setLoadingSubmissions(true);
       
       const submissionPromises = selectedForms.map(formId => 
-        fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${formId}/submissions`).then(res => res.json())
+        fetch(`http://localhost:5000/api/forms/${formId}/submissions`).then(res => res.json())
       );
 
       const submissionsData = await Promise.all(submissionPromises);

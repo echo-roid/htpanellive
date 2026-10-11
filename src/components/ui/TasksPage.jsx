@@ -63,7 +63,7 @@ const SendTaskNotification = ({ task, onClose }) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks/notify', {
+      const response = await fetch('http://localhost:5000/api/tasks/tasks/notify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -379,7 +379,7 @@ const EditTaskModal = ({ task, onClose, onTaskUpdated }) => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/employees");
+        const res = await fetch("http://localhost:5000/api/employees");
         const data = await res.json();
         const options = data.map(emp => ({
           value: emp.id,
@@ -408,7 +408,7 @@ const EditTaskModal = ({ task, onClose, onTaskUpdated }) => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks/${task.id}`, {
+      const response = await fetch(`http://localhost:5000/api/tasks/tasks/${task.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -717,7 +717,7 @@ const TaskLayout = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks?userId=${organizerId}`);
+        const res = await fetch(`http://localhost:5000/api/tasks/tasks?userId=${organizerId}`);
         if (!res.ok) throw new Error("Failed to fetch tasks");
         const data = await res.json();
         setTasks(data.tasks || []);
@@ -770,7 +770,7 @@ const TaskLayout = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const res = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/employees");
+        const res = await fetch("http://localhost:5000/api/employees");
         const data = await res.json();
         const options = data.map(emp => ({
           value: emp.id,
@@ -789,7 +789,7 @@ const TaskLayout = () => {
     e.preventDefault();
     try {
       const included_people = formData.participants.map(p => p.value);
-      const res = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks", {
+      const res = await fetch("http://localhost:5000/api/tasks/tasks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -821,7 +821,7 @@ const TaskLayout = () => {
 
   const updateTaskStatus = async (taskId, newStatus) => {
     try {
-      const res = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/tasks/tasks/${taskId}/status?userId=${organizerId}`, {
+      const res = await fetch(`http://localhost:5000/api/tasks/tasks/${taskId}/status?userId=${organizerId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),

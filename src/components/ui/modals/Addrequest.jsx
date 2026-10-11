@@ -67,7 +67,7 @@ const Addrequest = ({ onClose, employeeId }) => {
         setLoading(true);
 
         // Fetch leave settings
-        const settingsResponse = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/leave-settings/leave-settings');
+        const settingsResponse = await fetch('http://localhost:5000/api/leave-settings/leave-settings');
         if (!settingsResponse.ok) throw new Error('Failed to fetch leave settings');
         const settingsData = await settingsResponse.json();
 
@@ -83,7 +83,7 @@ const Addrequest = ({ onClose, employeeId }) => {
         setActiveLeaves(activeLeavesArray);
 
         // Fetch managers
-        const managersResponse = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/employees/allmanagers');
+        const managersResponse = await fetch('http://localhost:5000/api/employees/allmanagers');
         if (!managersResponse.ok) throw new Error('Failed to fetch managers');
         const managersData = await managersResponse.json();
         setManagers(managersData);
@@ -120,7 +120,7 @@ const Addrequest = ({ onClose, employeeId }) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/leave/request/${user?.employee.id}`, {
+      const response = await fetch(`http://localhost:5000/api/leave/request/${user?.employee.id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

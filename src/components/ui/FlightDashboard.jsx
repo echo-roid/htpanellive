@@ -17,7 +17,7 @@ const FlightDashboard = ({ leadId }) => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/flight-status/dashboard/${leadId}`);
+      const response = await fetch(`http://localhost:5000/api/flight-status/dashboard/${leadId}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -42,7 +42,7 @@ const FlightDashboard = ({ leadId }) => {
 
   const fetchLiveUpdates = async () => {
     try {
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/flight-status/live-updates/${leadId}`);
+      const response = await fetch(`http://localhost:5000/api/flight-status/live-updates/${leadId}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

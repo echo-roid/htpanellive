@@ -15,7 +15,7 @@ const Sharelink = () => {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const response = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/shared/${shareId}`);
+        const response = await axios.get(`http://localhost:5000/api/forms/shared/${shareId}`);
         
         // Parse config and styles if they're strings
         const fields = response.data.form.fields.map(field => ({
@@ -180,7 +180,7 @@ const Sharelink = () => {
 
         // Send to API endpoint
         const response = await axios.post(
-          'https://tableware-dweeb-estate.ngrok-free.dev/api/forms/submit-response', 
+          'http://localhost:5000/api/forms/submit-response', 
           submissionData,
           {
             headers: {

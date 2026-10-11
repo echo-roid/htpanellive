@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Async thunk to fetch employees
 export const fetchEmployees = createAsyncThunk("employee/fetchEmployees", async () => {
-  const response = await fetch("https://tableware-dweeb-estate.ngrok-free.dev/api/employees");
+  const response = await fetch("http://localhost:5000/api/employees");
   if (!response.ok) {
     throw new Error("Failed to fetch employees");
   }

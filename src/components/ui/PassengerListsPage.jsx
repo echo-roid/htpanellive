@@ -80,7 +80,7 @@ import {
 import { useParams } from 'react-router-dom';
 
 // API Base URL
-const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // Helper functions
 const safeArray = (array) => Array.isArray(array) ? array : [];

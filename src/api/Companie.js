@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api/companies';
+const API_URL = 'http://localhost:5000/api/companies';
 
 // Create axios instance
 const api = axios.create({

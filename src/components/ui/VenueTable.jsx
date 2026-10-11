@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Venueform from "./VenueForm"
 
-const API_BASE_URL = "https://tableware-dweeb-estate.ngrok-free.dev/api";
+const API_BASE_URL = "http://localhost:5000/api";
 
 const CompactVenueTable = () => {
   const [searchTerm, setSearchTerm] = useState('');

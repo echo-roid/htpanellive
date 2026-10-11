@@ -37,7 +37,7 @@ const PnrRemovalHistory = () => {
       params.append('page', searchParams.page);
       params.append('limit', searchParams.limit);
 
-      const response = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/assing-pnr/pnr-removals?${params.toString()}`);
+      const response = await axios.get(`http://localhost:5000/api/assing-pnr/pnr-removals?${params.toString()}`);
       
       console.log('API Response:', response.data);
       

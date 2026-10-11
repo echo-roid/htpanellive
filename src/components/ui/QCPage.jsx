@@ -69,7 +69,7 @@ const QCPage = () => {
             }));
 
             // Make API call to update status
-            const response = await axios.put(`https://tableware-dweeb-estate.ngrok-free.dev/api/qc/leads/${leadId}/status`, {
+            const response = await axios.put(`http://localhost:5000/api/qc/leads/${leadId}/status`, {
                 status,
                 notes: notes[uniqueId] || '',
                 reviewedBy: 'QC User'
@@ -142,7 +142,7 @@ const QCPage = () => {
             console.log('QC Results to save:', qcResults);
 
             // Make bulk API call
-            const response = await axios.post('https://tableware-dweeb-estate.ngrok-free.dev/api/qc/leads/bulk-update', {
+            const response = await axios.post('http://localhost:5000/api/qc/leads/bulk-update', {
                 submissions: qcResults,
                 reviewedBy: 'QC User'
             });
@@ -185,7 +185,7 @@ const QCPage = () => {
 
             console.log('Sending approve payload (no banners):', payload);
 
-            const response = await axios.post(`https://tableware-dweeb-estate.ngrok-free.dev/api/qc/leads/${leadId}/approve`, payload);
+            const response = await axios.post(`http://localhost:5000/api/qc/leads/${leadId}/approve`, payload);
 
             if (response.data.success) {
                 setQcStatus(prev => ({
@@ -226,7 +226,7 @@ const QCPage = () => {
         
         try {
             setLoading(true);
-            const response = await axios.post(`https://tableware-dweeb-estate.ngrok-free.dev/api/qc/leads/${leadId}/reject`, {
+            const response = await axios.post(`http://localhost:5000/api/qc/leads/${leadId}/reject`, {
                 notes: notes[uniqueId] || '',
                 reviewedBy: 'QC User',
                 rejectionReasons: ['Quality check failed'],

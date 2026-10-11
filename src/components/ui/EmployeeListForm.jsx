@@ -18,7 +18,7 @@ const EmployeeList = () => {
   useEffect(() => {
     async function fetchEmployees() {
       try {
-        const res = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/forms/list');
+        const res = await fetch('http://localhost:5000/api/forms/list');
         const data = await res.json();
 
         if (res.ok) {

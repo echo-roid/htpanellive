@@ -580,77 +580,75 @@ export default function HotelRoomListing() {
     };
 
     // ==================== ROOM NUMBER API FUNCTIONS ====================
+    // ONLY ONE API IS USED FOR ALL ROOM NUMBER ASSIGNMENTS:
+    // PUT /api/hotels/pnr/{pnrId}/passenger/{passengerIndex}/room-number
 
     // Assign a single room number - By PNR ID and Passenger Index
-    const assignRoomNumber = async (pnrId, passengerIndex, roomNumber, hotelType = 'destination', flightDirection = 'onward', leadId = null) => {
-        try {
-            const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
-            const url = `${API_BASE_URL}/hotels/pnr/${pnrId}/passenger/${passengerIndex}/room-number`;
-            
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    room_number: roomNumber,
-                    hotel_type: hotelType,
-                    flight_direction: flightDirection,
-                    lead_id: leadId
-                })
-            });
-
-            const result = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(result.message || 'Failed to assign room number');
-            }
-            
-            return result;
-            
-        } catch (error) {
-            console.error('Error assigning room number:', error);
-            throw error;
+   // Assign a single room number - By PNR ID and Passenger Index
+const assignRoomNumber = async (
+    pnrId,
+    passengerIndex,
+    roomNumber,
+    hotelType = 'destination',
+    flightDirection = 'onward',
+    leadId = null,
+    paxCode = null
+) => {
+    try {
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // Build URL using BOTH pnrId and paxCode as path params
+        // If paxCode exists → use paxCode path
+        // Else → use pnrId path with passenger_index in body
+        let url;
+        let body;
+        
+        if (paxCode && paxCode !== 'N/A') {
+            // paxCode-based lookup
+            url = `${API_BASE_URL}/vendors/pnr/${pnrId}/passenger/${paxCode}/room-number`;
+            body = {
+                room_number: roomNumber,
+                hotel_type: hotelType,
+                flight_direction: flightDirection,
+                lead_id: leadId
+            };
+        } else {
+            // pnrId-based lookup — controller requires `passengerIndex` in body
+            url = `${API_BASE_URL}/vendors/pnr/${pnrId}/passenger/NA/room-number`;
+            body = {
+                passengerIndex: passengerIndex,   // ✅ REQUIRED by controller when paxCode missing
+                room_number: roomNumber,
+                hotel_type: hotelType,
+                flight_direction: flightDirection,
+                lead_id: leadId
+            };
         }
-    };
+        
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body)
+        });
 
-    // Assign a single room number - By Pax Code
-    const assignRoomNumberByPax = async (paxCode, roomNumber, hotelType = 'destination', flightDirection = 'onward', leadId = null) => {
-        try {
-            const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
-            const url = `${API_BASE_URL}/hotels/pax/${paxCode}/room-number`;
-            
-            const response = await fetch(url, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    room_number: roomNumber,
-                    hotel_type: hotelType,
-                    flight_direction: flightDirection,
-                    lead_id: leadId
-                })
-            });
-
-            const result = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(result.message || 'Failed to assign room number');
-            }
-            
-            return result;
-            
-        } catch (error) {
-            console.error('Error assigning room number by pax:', error);
-            throw error;
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Failed to assign room number');
         }
-    };
-
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error assigning room number:', error);
+        throw error;
+    }
+};
     // Batch assign room numbers - By PNR ID
     const batchAssignRoomNumbers = async (pnrId, assignments, hotelType = 'destination', flightDirection = 'onward', leadId = null) => {
         try {
-            const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+            const API_BASE_URL = 'http://localhost:5000/api';
             const url = `${API_BASE_URL}/hotels/pnr/${pnrId}/passengers/room-numbers`;
             
             const response = await fetch(url, {
@@ -680,39 +678,6 @@ export default function HotelRoomListing() {
         }
     };
 
-    // Batch assign room numbers - By Pax Code
-    const batchAssignRoomNumbersByPax = async (paxCode, assignments, hotelType = 'destination', flightDirection = 'onward', leadId = null) => {
-        try {
-            const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
-            const url = `${API_BASE_URL}/hotels/pax/${paxCode}/passengers/room-numbers`;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    assignments: assignments,
-                    hotel_type: hotelType,
-                    flight_direction: flightDirection,
-                    lead_id: leadId
-                })
-            });
-
-            const result = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(result.message || 'Failed to assign room numbers');
-            }
-            
-            return result;
-            
-        } catch (error) {
-            console.error('Error batch assigning room numbers by pax:', error);
-            throw error;
-        }
-    };
-
     // ==================== ROOM NUMBER UI HANDLERS ====================
 
     const handleOpenRoomAssignment = (passenger, hotelType = 'destination', flightDirection = 'onward') => {
@@ -721,9 +686,15 @@ export default function HotelRoomListing() {
                        passenger.pnrData?.passenger?.lead_id || 
                        null;
         
+        // Ensure passengerIndex is a valid number
+        const passengerIndex = passenger.pnrData?.passengerIndex !== undefined && 
+                               passenger.pnrData?.passengerIndex !== null 
+            ? passenger.pnrData.passengerIndex 
+            : 0;
+        
         setRoomAssignmentData({
             pnrId: passenger.pnrData?.pnrId,
-            passengerIndex: passenger.pnrData?.passengerIndex,
+            passengerIndex: passengerIndex,
             passengerName: passenger.fullName,
             paxCode: passenger.paxCode || 'N/A',
             roomNumber: '',
@@ -735,53 +706,45 @@ export default function HotelRoomListing() {
     };
 
     const handleAssignRoomNumber = async () => {
-        if (!roomAssignmentData.pnrId || roomAssignmentData.passengerIndex === null || !roomAssignmentData.roomNumber) {
-            alert('Please fill in all required fields');
-            return;
+    if (!roomAssignmentData.pnrId || !roomAssignmentData.roomNumber) {
+        alert('Please fill in all required fields');
+        return;
+    }
+
+    // If no paxCode, passengerIndex is required
+    const hasPaxCode = roomAssignmentData.paxCode && roomAssignmentData.paxCode !== 'N/A';
+    if (!hasPaxCode && (roomAssignmentData.passengerIndex === null || roomAssignmentData.passengerIndex === undefined)) {
+        alert('Passenger Index is required when Pax Code is missing');
+        return;
+    }
+
+    setRoomAssignmentLoading(true);
+
+    try {
+        const leadId = roomAssignmentData.leadId || null;
+        const paxCode = hasPaxCode ? roomAssignmentData.paxCode : null;
+
+        const result = await assignRoomNumber(
+            roomAssignmentData.pnrId,
+            roomAssignmentData.passengerIndex,   // 0-based
+            roomAssignmentData.roomNumber,
+            roomAssignmentData.hotelType,
+            roomAssignmentData.flightDirection,
+            leadId,
+            paxCode
+        );
+
+        if (result.success) {
+            alert(`Room number ${roomAssignmentData.roomNumber} assigned to ${roomAssignmentData.passengerName} successfully!`);
+            setShowRoomAssignmentModal(false);
+            fetchPnrPassengers();
         }
-
-        setRoomAssignmentLoading(true);
-
-        try {
-            const leadId = roomAssignmentData.leadId || null;
-            
-            if (roomAssignmentData.paxCode && roomAssignmentData.paxCode !== 'N/A') {
-                const result = await assignRoomNumberByPax(
-                    roomAssignmentData.paxCode,
-                    roomAssignmentData.roomNumber,
-                    roomAssignmentData.hotelType,
-                    roomAssignmentData.flightDirection,
-                    leadId
-                );
-                
-                if (result.success) {
-                    alert(`Room number ${roomAssignmentData.roomNumber} assigned to ${roomAssignmentData.passengerName} (${roomAssignmentData.paxCode}) successfully!`);
-                    setShowRoomAssignmentModal(false);
-                    fetchPnrPassengers();
-                }
-            } else {
-                const result = await assignRoomNumber(
-                    roomAssignmentData.pnrId,
-                    roomAssignmentData.passengerIndex,
-                    roomAssignmentData.roomNumber,
-                    roomAssignmentData.hotelType,
-                    roomAssignmentData.flightDirection,
-                    leadId
-                );
-                
-                if (result.success) {
-                    alert(`Room number ${roomAssignmentData.roomNumber} assigned to ${roomAssignmentData.passengerName} successfully!`);
-                    setShowRoomAssignmentModal(false);
-                    fetchPnrPassengers();
-                }
-            }
-        } catch (error) {
-            alert('Error assigning room number: ' + error.message);
-        } finally {
-            setRoomAssignmentLoading(false);
-        }
-    };
-
+    } catch (error) {
+        alert('Error assigning room number: ' + error.message);
+    } finally {
+        setRoomAssignmentLoading(false);
+    }
+};
     const handleOpenBatchRoomAssignment = (selectedPassengers, hotelType = 'destination', flightDirection = 'onward') => {
         if (selectedPassengers.length === 0) {
             alert('Please select at least one passenger');
@@ -794,8 +757,10 @@ export default function HotelRoomListing() {
                        selectedPassengers[0]?.pnrData?.passenger?.lead_id || 
                        null;
         
-        const assignments = selectedPassengers.map((p) => ({
-            passengerIndex: p.pnrData?.passengerIndex,
+        const assignments = selectedPassengers.map((p, idx) => ({
+            passengerIndex: p.pnrData?.passengerIndex !== undefined && p.pnrData?.passengerIndex !== null
+                ? p.pnrData.passengerIndex
+                : idx,
             passengerName: p.fullName,
             paxCode: p.paxCode || 'N/A',
             roomNumber: p.roomNo || p.transitRoomNo || p.preHotelRoomNo || p.postHotelRoomNo || '',
@@ -839,27 +804,13 @@ export default function HotelRoomListing() {
 
             const leadId = batchRoomData.leadId || null;
             
-            const hasPaxCode = assignments.every(a => a.paxCode);
-            
-            let result;
-            if (hasPaxCode && assignments.length > 0) {
-                const paxCode = assignments[0].paxCode;
-                result = await batchAssignRoomNumbersByPax(
-                    paxCode,
-                    assignments,
-                    batchRoomData.hotelType,
-                    batchRoomData.flightDirection,
-                    leadId
-                );
-            } else {
-                result = await batchAssignRoomNumbers(
-                    batchRoomData.pnrId,
-                    assignments,
-                    batchRoomData.hotelType,
-                    batchRoomData.flightDirection,
-                    leadId
-                );
-            }
+            const result = await batchAssignRoomNumbers(
+                batchRoomData.pnrId,
+                assignments,
+                batchRoomData.hotelType,
+                batchRoomData.flightDirection,
+                leadId
+            );
 
             if (result.success) {
                 alert(`Successfully assigned room numbers to ${result.data.totalAssigned} passenger(s)!`);
@@ -1466,7 +1417,7 @@ export default function HotelRoomListing() {
     // Assign hotel to PNR
     const assignHotelToPNR = async (pnrId, hotelData) => {
         try {
-            const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+            const API_BASE_URL = 'http://localhost:5000/api';
             const url = `${API_BASE_URL}/vendors/pnr/${pnrId}/hotels`;
             
             console.log('Sending hotel assignment to:', url);
@@ -1716,7 +1667,7 @@ export default function HotelRoomListing() {
             setPnrLoading(true);
             setPnrError("");
             console.log(`Fetching PNR passengers for lead ID: ${id}`);
-            const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/hotels/done-passengers/lead/${id}`);
+            const response = await fetch(`http://localhost:5000/api/hotels/done-passengers/lead/${id}`);
             const data = await response.json();
 
             if (!response.ok) {
@@ -1762,7 +1713,7 @@ export default function HotelRoomListing() {
     const fetchAvailableHotels = async () => {
         try {
             setHotelsLoading(true);
-            const response = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/vendors/hotels');
+            const response = await fetch('http://localhost:5000/api/vendors/hotels');
             const data = await response.json();
             
             if (!response.ok) {

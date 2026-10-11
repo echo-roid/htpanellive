@@ -23,7 +23,7 @@ import {
   MoreVertical
 } from 'lucide-react';
 
-const API_BASE_URL = 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+const API_BASE_URL = 'http://localhost:5000/api';
 
 // Safe array access helper
 const safeArray = (array) => Array.isArray(array) ? array : [];
@@ -718,7 +718,7 @@ export default function PassengerListPage() {
   const fetchGuestListData = async () => {
     try {
       const { data: res } = await axios.get(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/guestlist`
+        `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist`
       );
 
       if (res?.guestData && Array.isArray(res.guestData)) {
@@ -745,7 +745,7 @@ export default function PassengerListPage() {
   const fetchForms = async () => {
     try {
       setFormsLoading(true);
-      const response = await fetch(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/lead/${leadId}`);
+      const response = await fetch(`http://localhost:5000/api/forms/lead/${leadId}`);
       const data = await response.json();
 
       if (!response.ok) {

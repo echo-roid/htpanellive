@@ -355,7 +355,7 @@ const SharedFormViewer = () => {
             // Send to API
             console.log('📤 Sending extracted text to API for Aadhar...');
 
-            const response = await axios.post('https://tableware-dweeb-estate.ngrok-free.dev/api/scann-document', {
+            const response = await axios.post('http://localhost:5000/api/scann-document', {
                 documentType: 'aadhaar',
                 rawText: combinedText
             }, {
@@ -504,7 +504,7 @@ const SharedFormViewer = () => {
             // Send to API
             console.log('📤 Sending extracted text to API for Passport...');
 
-            const response = await axios.post('https://tableware-dweeb-estate.ngrok-free.dev/api/scann-document', {
+            const response = await axios.post('http://localhost:5000/api/scann-document', {
                 documentType: 'passport',
                 rawText: combinedText
             }, {
@@ -753,7 +753,7 @@ const SharedFormViewer = () => {
     useEffect(() => {
         const fetchForm = async () => {
             try {
-                const response = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/shared/${shareId}`);
+                const response = await axios.get(`http://localhost:5000/api/forms/shared/${shareId}`);
                 const rawForm = response.data.form;
                 setLeadID(rawForm?.lead_id);
                 
@@ -1392,7 +1392,7 @@ const SharedFormViewer = () => {
 </body>
 </html>`;
             
-            const response = await fetch('https://tableware-dweeb-estate.ngrok-free.dev/api/email/send-email', {
+            const response = await fetch('http://localhost:5000/api/email/send-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1480,7 +1480,7 @@ const SharedFormViewer = () => {
                 }
             });
 
-            await axios.post(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/submit`, {
+            await axios.post(`http://localhost:5000/api/forms/submit`, {
                 shareId: shareId,
                 lead_id: leadId,
                 responses: submissionData

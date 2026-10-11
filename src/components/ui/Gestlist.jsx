@@ -34,8 +34,7 @@ import {
 const inputClass =
   "min-w-[19px] h-7 px-2 py-1 text-xs leading-tight border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500";
 
-const Gestlist = ({leaD}) => {
-  
+const Gestlist = ({ leaD }) => {
   const { id: mainLeadId } = useParams();
   const leadId = leaD ?? mainLeadId;
   const [allColumns, setAllColumns] = useState([]);
@@ -43,8 +42,9 @@ const Gestlist = ({leaD}) => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [editingHeader, setEditingHeader] = useState(null);
+  const [editedHeaderValue, setEditedHeaderValue] = useState(""); // ✅ NEW: local edit value
   const [showColumnSelector, setShowColumnSelector] = useState(false);
-  
+
   // Settings modal
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [headerOptions, setHeaderOptions] = useState([]);
@@ -64,7 +64,7 @@ const Gestlist = ({leaD}) => {
   // Select checkbox state
   const [selectedRows, setSelectedRows] = useState(new Set());
   const [selectAll, setSelectAll] = useState(false);
-  
+
   // Serial number field
   const [showSerialNumber, setShowSerialNumber] = useState(true);
   const [serialNumberField] = useState("Sr.No.");
@@ -73,7 +73,7 @@ const Gestlist = ({leaD}) => {
   const [CallPop, setCallPop] = useState(false);
   const [ActiveFilter, setActiveFilter] = useState(false);
   const [ActiveSelectBox, setActiveSelectBox] = useState(false);
-  
+
   // Remark modal state
   const [remarkModal, setRemarkModal] = useState({
     isOpen: false,
@@ -149,11 +149,11 @@ const Gestlist = ({leaD}) => {
     const fetchGuestList = async () => {
       try {
         const { data: res } = await axios.get(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/guestlist`
+          `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist`
         );
 
         const { data: dyn } = await axios.get(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/dynamic-values/${leadId}`
+          `http://localhost:5000/api/dynamic-values/${leadId}`
         );
 
         if (res && res.guestData && Array.isArray(res.guestData)) {
@@ -161,10 +161,10 @@ const Gestlist = ({leaD}) => {
 
           if (dyn.status === "success" && dyn.data.length > 0) {
             const dynamic = dyn.data[0].SelectedField;
-            
+
             if (dynamic?.numberofPax && Array.isArray(dynamic.numberofPax)) {
               const formfillMap = {};
-              
+
               dynamic.numberofPax.forEach((paxGroup) => {
                 paxGroup.selectField.forEach((fieldObj) => {
                   const fcCode = fieldObj["Fc Code"];
@@ -173,13 +173,13 @@ const Gestlist = ({leaD}) => {
                   }
                 });
               });
-              
+
               processed.data = processed.data.map((row) => {
                 const rowFcCode = row["Fc Code"];
                 const formfillValue = rowFcCode ? formfillMap[String(rowFcCode)] : 0;
-                
-                return { 
-                  ...row, 
+
+                return {
+                  ...row,
                   formfill: formfillValue !== undefined ? formfillValue : (row.formfill || 0)
                 };
               });
@@ -246,7 +246,7 @@ const Gestlist = ({leaD}) => {
     const inactiveGuests = data.filter(row => row.Status === "Inactive").length;
     const totalFormfill = data.reduce((sum, row) => sum + (parseFloat(row.formfill) || 0), 0);
     const remarksCount = data.filter(row => row.remark && row.remark.trim() !== "").length;
-    
+
     return {
       totalGuests,
       activeGuests,
@@ -278,7 +278,7 @@ const Gestlist = ({leaD}) => {
     if (allColumns.includes("Number OF Pax Allowed")) {
       return "Number OF Pax Allowed";
     }
-    
+
     const lowerColumns = allColumns.map(col => col.toLowerCase());
     const searchTerms = [
       "number of pax allowed",
@@ -287,18 +287,18 @@ const Gestlist = ({leaD}) => {
       "number of pax",
       "pax"
     ];
-    
+
     for (const term of searchTerms) {
       const index = lowerColumns.findIndex(col => col.includes(term));
       if (index !== -1) {
         return allColumns[index];
       }
     }
-    
-    const nonSystemColumns = allColumns.filter(col => 
+
+    const nonSystemColumns = allColumns.filter(col =>
       !['select', 'Sr.No.', 'Sr.No', 'Sr No', 'Sr No.', 'Status', 'formfill', 'remark'].includes(col)
     );
-    
+
     return nonSystemColumns[0] || null;
   };
 
@@ -341,7 +341,7 @@ const Gestlist = ({leaD}) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragOver(false);
-    
+
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
@@ -358,7 +358,7 @@ const Gestlist = ({leaD}) => {
   const processExcelFile = async (file) => {
     const validExtensions = ['.xlsx', '.xls', '.csv'];
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
-    
+
     if (!validExtensions.includes(fileExtension)) {
       showNotification("error", "Invalid file type", "Please upload Excel files (.xlsx, .xls) or CSV files.");
       return;
@@ -374,7 +374,7 @@ const Gestlist = ({leaD}) => {
           const workbook = XLSX.read(bstr, { type: "binary" });
           const worksheet = workbook.Sheets[workbook.SheetNames[0]];
           const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-          
+
           if (json.length > 0) {
             let processed = processData(json);
             processed.data = processed.data.map(row => ({
@@ -398,12 +398,12 @@ const Gestlist = ({leaD}) => {
           setIsProcessingFile(false);
         }
       };
-      
+
       reader.onerror = () => {
         showNotification("error", "File read error", "Could not read the file. Please try again.");
         setIsProcessingFile(false);
       };
-      
+
       reader.readAsBinaryString(file);
     } catch (error) {
       console.error("Error processing file:", error);
@@ -414,24 +414,24 @@ const Gestlist = ({leaD}) => {
 
   const processData = (dataArray) => {
     if (dataArray.length === 0)
-      return { 
-        data: [], 
-        columns: ["select", "Sr. No.", "Status", "formfill", "remark"] 
+      return {
+        data: [],
+        columns: ["select", "Sr. No.", "Status", "formfill", "remark"]
       };
-    
+
     const hasStatus = dataArray[0].hasOwnProperty("Status");
     let newData = dataArray;
     if (!hasStatus) {
       newData = dataArray.map((row) => ({ ...row, Status: "Active" }));
     }
-    
-    newData = newData.map((row) => ({ 
-      ...row, 
+
+    newData = newData.map((row) => ({
+      ...row,
       formfill: row.formfill !== undefined ? row.formfill : 0,
       remark: row.remark || "",
       select: false
     }));
-    
+
     const columns = ["select", serialNumberField, ...Object.keys(newData[0]).filter(key => key !== "select")];
     return { data: newData, columns };
   };
@@ -502,7 +502,7 @@ const Gestlist = ({leaD}) => {
       filtered.sort((a, b) => {
         const valA = a[column]?.toString().toLowerCase() || "";
         const valB = b[column]?.toString().toLowerCase() || "";
-        
+
         if (sortDirection === 'asc') {
           return valA.localeCompare(valB);
         } else {
@@ -557,12 +557,12 @@ const Gestlist = ({leaD}) => {
 
   const handleColumnDrop = () => {
     if (dragItem === null || dragOverItem === null) return;
-    
+
     const newVisibleColumns = [...visibleColumns];
     const draggedItem = newVisibleColumns[dragItem];
     newVisibleColumns.splice(dragItem, 1);
     newVisibleColumns.splice(dragOverItem, 0, draggedItem);
-    
+
     setVisibleColumns(newVisibleColumns);
     setDragItem(null);
     setDragOverItem(null);
@@ -598,15 +598,15 @@ const Gestlist = ({leaD}) => {
   const toggleRowSelect = (rowIndex) => {
     const actualRowIndex = data.findIndex(item => item === filteredData[rowIndex]);
     const newSelectedRows = new Set(selectedRows);
-    
+
     if (newSelectedRows.has(actualRowIndex)) {
       newSelectedRows.delete(actualRowIndex);
     } else {
       newSelectedRows.add(actualRowIndex);
     }
-    
+
     setSelectedRows(newSelectedRows);
-    
+
     const updatedData = [...data];
     updatedData[actualRowIndex].select = !updatedData[actualRowIndex].select;
     setData(updatedData);
@@ -615,10 +615,10 @@ const Gestlist = ({leaD}) => {
   const toggleSelectAll = () => {
     const newSelectAll = !selectAll;
     setSelectAll(newSelectAll);
-    
+
     const newSelectedRows = new Set();
     const updatedData = [...data];
-    
+
     if (newSelectAll) {
       filteredData.forEach((row, index) => {
         const actualRowIndex = data.findIndex(item => item === row);
@@ -631,7 +631,7 @@ const Gestlist = ({leaD}) => {
         updatedData[actualRowIndex].select = false;
       });
     }
-    
+
     setSelectedRows(newSelectedRows);
     setData(updatedData);
   };
@@ -681,7 +681,7 @@ const Gestlist = ({leaD}) => {
   const updateGuestRow = async (rowIndex, updatedRowData) => {
     try {
       const response = await axios.put(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/update-row`,
+        `http://localhost:5000/api/guestlist/leads/${leadId}/update-row`,
         {
           rowIndex: rowIndex,
           updatedData: updatedRowData
@@ -712,8 +712,8 @@ const Gestlist = ({leaD}) => {
       const emptyRow = {};
       allColumns.forEach(col => {
         if (col === "select" || col === serialNumberField) return;
-        emptyRow[col] = col === "Status" ? "Active" : 
-                       col === "formfill" ? 0 : "";
+        emptyRow[col] = col === "Status" ? "Active" :
+          col === "formfill" ? 0 : "";
       });
       setAddRowModal({
         isOpen: true,
@@ -762,7 +762,7 @@ const Gestlist = ({leaD}) => {
           closeAddRowModal();
         }
       } else {
-        const newRow = { 
+        const newRow = {
           ...rowData,
           [serialNumberField]: data.length + 1,
           select: false
@@ -770,7 +770,7 @@ const Gestlist = ({leaD}) => {
         const { select, [serialNumberField]: srNo, ...cleanNewRow } = newRow;
 
         const response = await axios.post(
-          `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/guestlist?action=append`,
+          `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist?action=append`,
           { guestData: [cleanNewRow] }
         );
 
@@ -794,6 +794,7 @@ const Gestlist = ({leaD}) => {
     if (!newHeader || newHeader.trim() === "") return;
     if (oldColumn === newHeader) {
       setEditingHeader(null);
+      setEditedHeaderValue("");
       return;
     }
 
@@ -814,11 +815,12 @@ const Gestlist = ({leaD}) => {
     });
     setData(updatedData);
     setEditingHeader(null);
+    setEditedHeaderValue("");
 
     try {
       // Call API to rename header
       await axios.put(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/rename-header`,
+        `http://localhost:5000/api/guestlist/leads/${leadId}/rename-header`,
         {
           oldColumnName: oldColumn,
           newColumnName: newHeader
@@ -841,7 +843,7 @@ const Gestlist = ({leaD}) => {
     if (rowIndex !== null) {
       const actualRowIndex = data.findIndex(item => item === filteredData[rowIndex]);
       const rowData = data[actualRowIndex];
-      
+
       setRemoveModal({
         isOpen: true,
         rowIndex: actualRowIndex,
@@ -873,11 +875,11 @@ const Gestlist = ({leaD}) => {
   const handleRemoveRow = async () => {
     try {
       let payload = {};
-      
+
       if (removeModal.method === "index" && removeModal.rowIndex !== null) {
         payload = { rowIndex: removeModal.rowIndex };
       } else if (removeModal.method === "identifier") {
-        payload = { 
+        payload = {
           identifier: {
             field: removeModal.identifierField,
             value: removeModal.identifierValue
@@ -888,7 +890,7 @@ const Gestlist = ({leaD}) => {
       }
 
       const response = await axios.delete(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/remove-row`,
+        `http://localhost:5000/api/guestlist/leads/${leadId}/remove-row`,
         { data: payload }
       );
 
@@ -897,14 +899,14 @@ const Gestlist = ({leaD}) => {
         if (removeModal.method === "index" && removeModal.rowIndex !== null) {
           updatedData.splice(removeModal.rowIndex, 1);
         } else {
-          const index = updatedData.findIndex(row => 
+          const index = updatedData.findIndex(row =>
             row[removeModal.identifierField] == removeModal.identifierValue
           );
           if (index !== -1) {
             updatedData.splice(index, 1);
           }
         }
-        
+
         setData(updatedData);
         showNotification("success", "Record removed successfully", response.data.message);
         closeRemoveModal();
@@ -928,7 +930,7 @@ const Gestlist = ({leaD}) => {
       showNotification("info", "No rows selected", "Please select rows to remove.");
       return;
     }
-    
+
     setBulkRemoveModal({
       isOpen: true,
       selectedIndices: selectedRows,
@@ -961,9 +963,9 @@ const Gestlist = ({leaD}) => {
   const handleBulkRemove = async () => {
     try {
       const indices = Array.from(bulkRemoveModal.selectedIndices);
-      
+
       const response = await axios.delete(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/bulk-remove`,
+        `http://localhost:5000/api/guestlist/leads/${leadId}/bulk-remove`,
         { data: { rowIndices: indices } }
       );
 
@@ -973,7 +975,7 @@ const Gestlist = ({leaD}) => {
         sortedIndices.forEach(index => {
           updatedData.splice(index, 1);
         });
-        
+
         setData(updatedData);
         setSelectedRows(new Set());
         setSelectAll(false);
@@ -1014,17 +1016,17 @@ const Gestlist = ({leaD}) => {
 
     const updatedData = [...data];
     const selectedIndices = Array.from(selectedRows);
-    
+
     selectedIndices.forEach(index => {
       if (updatedData[index]) {
         updatedData[index].Status = bulkStatusModal.newStatus;
       }
     });
-    
+
     setData(updatedData);
     showNotification(
-      "success", 
-      `Status updated to ${bulkStatusModal.newStatus}`, 
+      "success",
+      `Status updated to ${bulkStatusModal.newStatus}`,
       `${selectedRows.size} selected row(s) updated`
     );
     closeBulkStatusModal();
@@ -1053,7 +1055,7 @@ const Gestlist = ({leaD}) => {
 
     try {
       const response = await axios.delete(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/clear`,
+        `http://localhost:5000/api/guestlist/leads/${leadId}/clear`,
         { data: { confirm: true } }
       );
 
@@ -1084,9 +1086,9 @@ const Gestlist = ({leaD}) => {
 
     try {
       const dataToSubmit = data.map(({ select, [serialNumberField]: srNo, ...rest }) => rest);
-      
+
       const response = await axios.post(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/guestlist?action=${chooseSubmit}`,
+        `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist?action=${chooseSubmit}`,
         { guestData: dataToSubmit }
       );
       showNotification("success", "Guest list submitted", response.data.message);
@@ -1100,7 +1102,7 @@ const Gestlist = ({leaD}) => {
     setShowSettingsModal(true);
     try {
       const { data: res } = await axios.get(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/guestlist/leads/${leadId}/guest-list/headers`
+        `http://localhost:5000/api/guestlist/leads/${leadId}/guest-list/headers`
       );
       if (res.success) {
         setHeaderOptions(res.headers);
@@ -1134,12 +1136,12 @@ const Gestlist = ({leaD}) => {
 
     const selectedData = getSelectedRowsData();
     const exportData = selectedData.map(({ select, [serialNumberField]: srNo, ...rest }) => rest);
-    
+
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Selected Rows");
     XLSX.writeFile(workbook, `selected_rows_${new Date().getTime()}.xlsx`);
-    
+
     showNotification("success", "Export successful", `${selectedRows.size} rows exported.`);
   };
 
@@ -1151,12 +1153,12 @@ const Gestlist = ({leaD}) => {
     }
 
     const exportData = data.map(({ select, [serialNumberField]: srNo, ...rest }) => rest);
-    
+
     const worksheet = XLSX.utils.json_to_sheet(exportData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "All Guests");
     XLSX.writeFile(workbook, `guest_list_${new Date().getTime()}.xlsx`);
-    
+
     showNotification("success", "Export successful", `${data.length} rows exported.`);
   };
 
@@ -1164,9 +1166,8 @@ const Gestlist = ({leaD}) => {
     <div className="py-6 px-0 rounded-lg ">
       {/* Notification */}
       {notification.show && (
-        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md animate-slide-in ${
-          notification.type === "success" ? "bg-green-100 border-green-400 text-green-800" : "bg-red-100 border-red-400 text-red-800"
-        }`}>
+        <div className={`fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-md animate-slide-in ${notification.type === "success" ? "bg-green-100 border-green-400 text-green-800" : "bg-red-100 border-red-400 text-red-800"
+          }`}>
           <div className="flex items-start gap-3">
             {notification.type === "success" ? (
               <CheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
@@ -1265,15 +1266,15 @@ const Gestlist = ({leaD}) => {
 
         <div className="flex flex-wrap items-center gap-2">
           <button
-            onClick={()=>{setActiveSelectBox(!ActiveSelectBox)}}
+            onClick={() => { setActiveSelectBox(!ActiveSelectBox) }}
             className="inline-flex items-center gap-1 border border-blue-600 text-blue-600 hover:bg-blue-50 px-3 py-1 rounded"
             disabled={data.length === 0}
           >
-            <SquareMousePointer size={10}/> Select Show
+            <SquareMousePointer size={10} /> Select Show
           </button>
 
           <button
-            onClick={()=>{setActiveFilter(!ActiveFilter)}}
+            onClick={() => { setActiveFilter(!ActiveFilter) }}
             className="inline-flex items-center gap-1 border border-blue-600 text-blue-600 hover:bg-blue-50 px-3 py-1 rounded"
             disabled={data.length === 0}
           >
@@ -1394,11 +1395,10 @@ const Gestlist = ({leaD}) => {
                             onDragStart={(e) => handleColumnDragStart(e, index)}
                             onDragOver={(e) => handleColumnDragOver(e, index)}
                             onDrop={handleColumnDrop}
-                            className={`flex items-center gap-1 p-1 border rounded cursor-move ${
-                              dragOverItem === index
+                            className={`flex items-center gap-1 p-1 border rounded cursor-move ${dragOverItem === index
                                 ? "bg-blue-50 border-blue-300"
                                 : ""
-                            }`}
+                              }`}
                           >
                             <GripVertical size={12} className="text-gray-400" />
                             {column}
@@ -1479,11 +1479,10 @@ const Gestlist = ({leaD}) => {
 
       {/* Drag and Drop Area */}
       <div
-        className={`relative mb-6 border-2 border-dashed rounded-lg transition-all duration-300 ${
-          isDragOver 
-            ? 'border-blue-500 bg-blue-50 scale-[1.01] shadow-lg' 
+        className={`relative mb-6 border-2 border-dashed rounded-lg transition-all duration-300 ${isDragOver
+            ? 'border-blue-500 bg-blue-50 scale-[1.01] shadow-lg'
             : 'border-gray-300 hover:border-blue-400 hover:bg-blue-25'
-        } ${data.length > 0 ? 'hidden' : 'block'}`}
+          } ${data.length > 0 ? 'hidden' : 'block'}`}
         onDragEnter={handleDragEnter}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -1507,7 +1506,7 @@ const Gestlist = ({leaD}) => {
                   Upload .xlsx, .xls, or .csv files to import guest data
                 </p>
               </div>
-              
+
               <div className="flex items-center justify-center gap-3">
                 <button
                   onClick={handleFileInputClick}
@@ -1518,14 +1517,14 @@ const Gestlist = ({leaD}) => {
                 </button>
                 <span className="text-gray-500 text-sm">or drag and drop</span>
               </div>
-              
+
               <p className="text-gray-400 text-xs mt-4">
                 Supported formats: .xlsx, .xls, .csv • Max file size: 10MB
               </p>
             </>
           )}
         </div>
-        
+
         <input
           ref={fileInputRef}
           type="file"
@@ -1557,8 +1556,8 @@ const Gestlist = ({leaD}) => {
 
       {visibleColumns.length > 0 ? (
         <>
-          <div 
-            className="overflow-x-auto rounded border" 
+          <div
+            className="overflow-x-auto rounded border"
             style={{ maxHeight: '500px' }}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragOver}
@@ -1578,7 +1577,7 @@ const Gestlist = ({leaD}) => {
                       />
                     </th>
                   )}
-                  
+
                   {showSerialNumber && (
                     <th
                       className="px-3 py-1 font-semibold border-b bg-gray-100 sticky top-0 z-10"
@@ -1588,16 +1587,20 @@ const Gestlist = ({leaD}) => {
                       </div>
                     </th>
                   )}
-                  
+
                   {visibleColumns
                     .filter(col => col !== "select" && col !== serialNumberField)
                     .map((col) => (
                       <th
                         key={col}
                         className="px-3 py-1 font-semibold border-b bg-gray-100 sticky top-0 z-10 cursor-pointer group relative"
-                        onDoubleClick={() =>
-                          col !== "formfill" && col !== "remark" && setEditingHeader(col)
-                        }
+                        onDoubleClick={() => {
+                          // ✅ Open edit mode and seed the local value
+                          if (col !== "formfill" && col !== "remark") {
+                            setEditedHeaderValue(col);
+                            setEditingHeader(col);
+                          }
+                        }}
                       >
                         <div className="flex items-center justify-between min-h-[24px]">
                           <div className="flex items-center gap-1 flex-1">
@@ -1605,15 +1608,31 @@ const Gestlist = ({leaD}) => {
                               <GripVertical size={12} className="text-gray-400 cursor-move" />
                             )}
                             {editingHeader === col ? (
+                              // ✅ Local input: only commits on blur / Enter
                               <input
                                 type="text"
-                                value={col}
+                                value={editedHeaderValue}
                                 autoFocus
-                                onChange={(e) => handleHeaderChange(col, e.target.value)}
-                                onBlur={() => setEditingHeader(null)}
-                                onKeyDown={(e) =>
-                                  e.key === "Enter" && setEditingHeader(null)
-                                }
+                                onChange={(e) => setEditedHeaderValue(e.target.value)}
+                                onBlur={() => {
+                                  const trimmed = editedHeaderValue.trim();
+                                  if (trimmed && trimmed !== col) {
+                                    handleHeaderChange(col, trimmed);
+                                  } else {
+                                    setEditingHeader(null);
+                                    setEditedHeaderValue("");
+                                  }
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    e.currentTarget.blur(); // triggers onBlur -> saves once
+                                  }
+                                  if (e.key === "Escape") {
+                                    setEditingHeader(null);
+                                    setEditedHeaderValue("");
+                                  }
+                                }}
                                 className="w-full px-2 py-1 border rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-400"
                               />
                             ) : (
@@ -1623,15 +1642,14 @@ const Gestlist = ({leaD}) => {
                               </>
                             )}
                           </div>
-                          
+
                           {ActiveFilter && (
                             <button
                               onClick={(e) => openColumnFilter(col, e)}
-                              className={`ml-1 p-0.5 rounded transition-colors ${
-                                columnFilterPopup.column === col 
-                                  ? 'bg-blue-500 text-white' 
+                              className={`ml-1 p-0.5 rounded transition-colors ${columnFilterPopup.column === col
+                                  ? 'bg-blue-500 text-white'
                                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
-                              }`}
+                                }`}
                               title="Filter column"
                             >
                               <Filter size={10} />
@@ -1658,13 +1676,13 @@ const Gestlist = ({leaD}) => {
                         />
                       </td>
                     )}
-                    
+
                     {showSerialNumber && (
                       <td className="px-3 py-0 border-b text-center font-semibold text-gray-700">
                         {row[serialNumberField]}
                       </td>
                     )}
-                    
+
                     {visibleColumns
                       .filter(col => col !== "select" && col !== serialNumberField)
                       .map((col, cIdx) => (
@@ -1786,11 +1804,11 @@ const Gestlist = ({leaD}) => {
       {/* Column Filter Popup */}
       {columnFilterPopup.isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-40" 
+          <div
+            className="fixed inset-0 z-40"
             onClick={closeColumnFilter}
           />
-          <div 
+          <div
             className="fixed z-50 bg-white rounded-lg shadow-2xl border border-gray-200 p-4 w-64"
             style={{
               left: `${columnFilterPopup.position.x}px`,
@@ -1816,9 +1834,9 @@ const Gestlist = ({leaD}) => {
                   type="text"
                   placeholder="Search in column..."
                   value={columnFilterPopup.filterText}
-                  onChange={(e) => setColumnFilterPopup(prev => ({ 
-                    ...prev, 
-                    filterText: e.target.value 
+                  onChange={(e) => setColumnFilterPopup(prev => ({
+                    ...prev,
+                    filterText: e.target.value
                   }))}
                   className="w-full pl-8 pr-2 py-1.5 border rounded text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
@@ -1838,22 +1856,20 @@ const Gestlist = ({leaD}) => {
               <div className="flex gap-1">
                 <button
                   onClick={() => toggleSort('asc')}
-                  className={`flex-1 py-1.5 px-2 rounded text-sm flex items-center justify-center gap-1 ${
-                    columnFilterPopup.sortDirection === 'asc'
+                  className={`flex-1 py-1.5 px-2 rounded text-sm flex items-center justify-center gap-1 ${columnFilterPopup.sortDirection === 'asc'
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                    }`}
                 >
                   <ArrowUpDown size={12} />
                   A → Z
                 </button>
                 <button
                   onClick={() => toggleSort('desc')}
-                  className={`flex-1 py-1.5 px-2 rounded text-sm flex items-center justify-center gap-1 ${
-                    columnFilterPopup.sortDirection === 'desc'
+                  className={`flex-1 py-1.5 px-2 rounded text-sm flex items-center justify-center gap-1 ${columnFilterPopup.sortDirection === 'desc'
                       ? 'bg-green-500 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                    }`}
                 >
                   <ArrowUpDown size={12} />
                   Z → A
@@ -1870,9 +1886,9 @@ const Gestlist = ({leaD}) => {
                 <input
                   type="checkbox"
                   checked={columnFilterPopup.showDuplicates}
-                  onChange={(e) => setColumnFilterPopup(prev => ({ 
-                    ...prev, 
-                    showDuplicates: e.target.checked 
+                  onChange={(e) => setColumnFilterPopup(prev => ({
+                    ...prev,
+                    showDuplicates: e.target.checked
                   }))}
                   className="w-4 h-4"
                 />
@@ -1901,7 +1917,7 @@ const Gestlist = ({leaD}) => {
 
             {(columnFilterPopup.sortDirection || columnFilterPopup.filterText || columnFilterPopup.showDuplicates) && (
               <div className="mt-2 text-xs text-gray-500">
-                Active: 
+                Active:
                 {columnFilterPopup.sortDirection && ` Sorted ${columnFilterPopup.sortDirection === 'asc' ? 'A-Z' : 'Z-A'}`}
                 {columnFilterPopup.filterText && ` Search: "${columnFilterPopup.filterText}"`}
                 {columnFilterPopup.showDuplicates && ` Duplicates only`}
@@ -1919,7 +1935,7 @@ const Gestlist = ({leaD}) => {
               <MessageSquare size={24} />
               Add/Edit Remark
             </h3>
-            
+
             <textarea
               value={remarkModal.remark}
               onChange={(e) => setRemarkModal(prev => ({ ...prev, remark: e.target.value }))}
@@ -1927,7 +1943,7 @@ const Gestlist = ({leaD}) => {
               className="w-full h-32 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
               autoFocus
             />
-            
+
             <div className="flex justify-end gap-3 mt-4">
               <button
                 onClick={closeRemarkModal}
@@ -2071,9 +2087,9 @@ const Gestlist = ({leaD}) => {
                 </label>
                 <select
                   value={bulkStatusModal.newStatus}
-                  onChange={(e) => setBulkStatusModal(prev => ({ 
-                    ...prev, 
-                    newStatus: e.target.value 
+                  onChange={(e) => setBulkStatusModal(prev => ({
+                    ...prev,
+                    newStatus: e.target.value
                   }))}
                   className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
                 >
@@ -2131,9 +2147,9 @@ const Gestlist = ({leaD}) => {
                     </label>
                     <select
                       value={removeModal.identifierField}
-                      onChange={(e) => setRemoveModal(prev => ({ 
-                        ...prev, 
-                        identifierField: e.target.value 
+                      onChange={(e) => setRemoveModal(prev => ({
+                        ...prev,
+                        identifierField: e.target.value
                       }))}
                       className="w-full border rounded px-3 py-2"
                     >
@@ -2151,9 +2167,9 @@ const Gestlist = ({leaD}) => {
                     <input
                       type="text"
                       value={removeModal.identifierValue}
-                      onChange={(e) => setRemoveModal(prev => ({ 
-                        ...prev, 
-                        identifierValue: e.target.value 
+                      onChange={(e) => setRemoveModal(prev => ({
+                        ...prev,
+                        identifierValue: e.target.value
                       }))}
                       placeholder={`Enter ${removeModal.identifierField}`}
                       className="w-full border rounded px-3 py-2"
@@ -2212,11 +2228,10 @@ const Gestlist = ({leaD}) => {
                 <button
                   onClick={handleBulkRemove}
                   disabled={bulkRemoveModal.selectedIndices.size === 0}
-                  className={`px-4 py-2 rounded-lg transition-colors ${
-                    bulkRemoveModal.selectedIndices.size === 0
+                  className={`px-4 py-2 rounded-lg transition-colors ${bulkRemoveModal.selectedIndices.size === 0
                       ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                       : "bg-red-600 hover:bg-red-700 text-white"
-                  }`}
+                    }`}
                 >
                   Remove Selected ({bulkRemoveModal.selectedIndices.size})
                 </button>
@@ -2230,7 +2245,7 @@ const Gestlist = ({leaD}) => {
       {showSettingsModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white w-full max-w-2xl max-h-[85vh] rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col">
-            
+
             <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100 rounded-xl">
@@ -2381,7 +2396,7 @@ const Gestlist = ({leaD}) => {
                   };
                   try {
                     const response = await axios.post(
-                      `https://tableware-dweeb-estate.ngrok-free.dev/api/dynamic-values/${leadId}`,
+                      `http://localhost:5000/api/dynamic-values/${leadId}`,
                       payload
                     );
                     showNotification("success", "Settings saved successfully", `${Object.keys(paxMap).length} pax groups processed`);

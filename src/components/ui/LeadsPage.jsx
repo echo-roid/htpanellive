@@ -34,10 +34,10 @@ ChartJS.register(
   Filler
 );
 
-const API_URL = "https://tableware-dweeb-estate.ngrok-free.dev/api/leads";
-const EMPLOYEE_API_URL = "https://tableware-dweeb-estate.ngrok-free.dev/api/employees";
-const COMPANY_API_URL = "https://tableware-dweeb-estate.ngrok-free.dev/api/contacts";
-const CLIENT_API_URL = "https://tableware-dweeb-estate.ngrok-free.dev/api/companies";
+const API_URL = "http://localhost:5000/api/leads";
+const EMPLOYEE_API_URL = "http://localhost:5000/api/employees";
+const COMPANY_API_URL = "http://localhost:5000/api/contacts";
+const CLIENT_API_URL = "http://localhost:5000/api/companies";
 
 // Utility function to capitalize first letter of each word
 const capitalizeName = (name) => {
@@ -468,7 +468,7 @@ const LeadFormDrawer = ({
   const fetchDivisions = async (parentClientCode) => {
     try {
       const res = await axios.get(
-        `https://tableware-dweeb-estate.ngrok-free.dev/api/divisions/${parentClientCode}`
+        `http://localhost:5000/api/divisions/${parentClientCode}`
       );
 
       if (res.data.success) {

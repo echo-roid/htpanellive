@@ -404,7 +404,7 @@ const [activeGroupTab, setActiveGroupTab] = useState('all');
 
   // =================== API BASE URL ===================
 
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://tableware-dweeb-estate.ngrok-free.dev/api';
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api';
 
   // =================== FORMATTING FUNCTIONS ===================
 

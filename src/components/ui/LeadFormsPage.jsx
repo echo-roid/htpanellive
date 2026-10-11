@@ -42,6 +42,14 @@ import * as XLSX from 'xlsx';
 import Gestlist from "../ui/Gestlist"
 import bookImage  from "../../assets/book.png"
 
+// Builds full URL for guide images served from the backend
+const API_BASE = 'http://localhost:5000';
+const getImageUrl = (path) => {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    return `${API_BASE}${path.startsWith('/') ? '' : '/'}${path}`;
+};
+
 // Task Management Component
 const TaskManagementDrawer = ({
     isOpen,
@@ -168,7 +176,6 @@ const TaskManagementDrawer = ({
                     </button>
                 </div>
 
-                {/* Add/Edit Task Form */}
                 <div className="mt-6 bg-gray-50 p-4 rounded-lg border">
                     <h3 className="text-lg font-medium mb-4">
                         {editingTaskId ? "Edit Task" : "Add New Task"}
@@ -271,7 +278,6 @@ const TaskManagementDrawer = ({
                     </form>
                 </div>
 
-                {/* Tasks List */}
                 <div className="mt-8">
                     <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-medium">Tasks ({tasks.length})</h3>
@@ -385,23 +391,19 @@ const FormSubmissionsPage = () => {
     const [popupImage, setPopupImage] = useState(null);
     const [showImportModal, setShowImportModal] = useState(false);
     
-    // Column management state
     const [columns, setColumns] = useState([]);
     const [isManagingColumns, setIsManagingColumns] = useState(false);
     const [dragItem, setDragItem] = useState(null);
     const [dragOverItem, setDragOverItem] = useState(null);
 
-    // Edit and Delete states
     const [editingField, setEditingField] = useState(null);
     const [editValue, setEditValue] = useState('');
     const [isEditing, setIsEditing] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
 
-    // Individual field editing state
     const [individualEditing, setIndividualEditing] = useState(null);
     const [individualEditValue, setIndividualEditValue] = useState('');
 
-    // Task Management States
     const [isTaskDrawerOpen, setIsTaskDrawerOpen] = useState(false);
     const [selectedSubmission, setSelectedSubmission] = useState(null);
     const [tasks, setTasks] = useState([]);
@@ -415,18 +417,15 @@ const FormSubmissionsPage = () => {
     });
     const [editingTaskId, setEditingTaskId] = useState(null);
 
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [totalItems, setTotalItems] = useState(0);
 
-    // Filter state
     const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
     const [availableFilterFields, setAvailableFilterFields] = useState([]);
 
-    // Duplicate detection state
     const [duplicateConfig, setDuplicateConfig] = useState({
         enabled: false,
         fields: [],
@@ -434,16 +433,13 @@ const FormSubmissionsPage = () => {
         groupColors: {}
     });
 
-    // Forms and tabs state
     const [forms, setForms] = useState([]);
     const [activeForm, setActiveForm] = useState(null);
     const [formsError, setFormsError] = useState('');
     const [formsLoading, setFormsLoading] = useState(true);
 
-    // Tab selection state
     const [SelectedChoose, setSelectedChoose] = useState("guest");
 
-    // Stats state
     const [stats, setStats] = useState({
         totalEntries: 0,
         pendingQC: 0,
@@ -451,7 +447,6 @@ const FormSubmissionsPage = () => {
         rejected: 0
     });
 
-    // Status configuration
     const statusConfig = {
         'approved': {
             label: 'Approved',
@@ -470,7 +465,7 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // ==================== NEW: LABEL MANAGEMENT ====================
+    // ==================== LABEL MANAGEMENT ====================
     const [showLabelPopup, setShowLabelPopup] = useState(false);
     const [labelText, setLabelText] = useState("");
     const [labelColor, setLabelColor] = useState("#3B82F6");
@@ -478,7 +473,6 @@ const FormSubmissionsPage = () => {
     const [attachedFiles, setAttachedFiles] = useState([]);
     const [labels, setLabels] = useState({});
 
-    // Color options for labels
     const labelColors = [
         { name: "Blue", value: "#3B82F6" },
         { name: "Red", value: "#EF4444" },
@@ -489,13 +483,62 @@ const FormSubmissionsPage = () => {
         { name: "Gray", value: "#6B7280" }
     ];
 
-    // Priority options
     const priorityOptions = [
         { value: "low", label: "Low", color: "#10B981" },
         { value: "medium", label: "Medium", color: "#F59E0B" },
         { value: "high", label: "High", color: "#EF4444" },
         { value: "urgent", label: "Urgent", color: "#DC2626" }
     ];
+
+    // ==================== TRAVEL GUIDE ASSIGNMENT STATE ====================
+    const [showTravelGuideModal, setShowTravelGuideModal] = useState(false);
+    const [travelGuides, setTravelGuides] = useState([]);
+    const [travelGuideAssignments, setTravelGuideAssignments] = useState({});
+    const [travelGuideForm, setTravelGuideForm] = useState({
+        guideId: "",
+        guideName: "",
+        guidePhone: "",
+        guideEmail: "",
+        notes: "",
+        approved: false
+    });
+    const [guidesLoading, setGuidesLoading] = useState(false);
+    const [guideSaving, setGuideSaving] = useState(false);
+
+    // Bulk Travel Guide Assignment state
+    const [showBulkTravelGuideModal, setShowBulkTravelGuideModal] = useState(false);
+    const [bulkTravelGuideForm, setBulkTravelGuideForm] = useState({
+        guideId: "",
+        guideName: "",
+        guidePhone: "",
+        guideEmail: "",
+        notes: "",
+        approveAll: false
+    });
+    const [bulkGuideSaving, setBulkGuideSaving] = useState(false);
+
+    // ==================== MANAGE GUIDES STATE ====================
+    const [showManageGuidesModal, setShowManageGuidesModal] = useState(false);
+    const [newGuide, setNewGuide] = useState({
+        name: "",
+        phone: "",
+        email: "",
+        username: "",
+        password: "",
+        city: ""
+    });
+    const [creatingGuide, setCreatingGuide] = useState(false);
+    const [resetPwGuide, setResetPwGuide] = useState(null);
+    const [newPassword, setNewPassword] = useState("");
+    const [editingGuide, setEditingGuide] = useState(null);
+    const [editGuideForm, setEditGuideForm] = useState({
+        name: "", phone: "", email: "", username: "", city: "", status: "active"
+    });
+
+    // Image upload state
+    const [uploadingImageFor, setUploadingImageFor] = useState(null);
+    const [newGuideImageFile, setNewGuideImageFile] = useState(null);
+    const [newGuideImagePreview, setNewGuideImagePreview] = useState(null);
 
     // ==================== CHECKBOX STATE MANAGEMENT ====================
     const [selectedRows, setSelectedRows] = useState(new Set());
@@ -555,7 +598,6 @@ const FormSubmissionsPage = () => {
             }))
         };
 
-        // Apply label to all selected rows
         const updatedLabels = { ...labels };
         selectedRows.forEach(rowId => {
             if (!updatedLabels[rowId]) {
@@ -565,11 +607,7 @@ const FormSubmissionsPage = () => {
         });
 
         setLabels(updatedLabels);
-
-        // Show success message
         alert(`Label "${labelText}" applied to ${selectedRows.size} submission(s)`);
-
-        // Close popup and reset
         handleCloseLabelPopup();
     };
 
@@ -592,6 +630,463 @@ const FormSubmissionsPage = () => {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
+    // ==================== TRAVEL GUIDE FUNCTIONS ====================
+    const fetchTravelGuides = async () => {
+        setGuidesLoading(true);
+        try {
+            const response = await axios.get('http://localhost:5000/api/travel-guides');
+            if (response.data.success) {
+                setTravelGuides(response.data.guides || []);
+            }
+        } catch (err) {
+            console.error('Error fetching travel guides:', err);
+            setTravelGuides([
+                { id: 1, name: "Rajesh Kumar", phone: "+91 98765 43210", email: "rajesh@travel.com" },
+                { id: 2, name: "Priya Sharma", phone: "+91 98765 43211", email: "priya@travel.com" },
+                { id: 3, name: "Amit Patel", phone: "+91 98765 43212", email: "amit@travel.com" }
+            ]);
+        } finally {
+            setGuidesLoading(false);
+        }
+    };
+
+    const fetchTravelGuideAssignments = async (formId) => {
+        if (!formId) return;
+        try {
+            const response = await axios.get(
+                `http://localhost:5000/api/forms/${formId}/travel-guides`
+            );
+            if (response.data.success) {
+                setTravelGuideAssignments(response.data.data || {});
+            }
+        } catch (err) {
+            console.warn('Could not load guide assignments:', err.message);
+        }
+    };
+
+    const handleOpenTravelGuideModal = (submission) => {
+        const submissionId = submission.id || submission._id || `temp-${submission.tempId}`;
+        setSelectedSubmission(submission);
+        
+        const existing = travelGuideAssignments[submissionId];
+        if (existing) {
+            setTravelGuideForm({
+                guideId: existing.guideId || "",
+                guideName: existing.guideName || "",
+                guidePhone: existing.guidePhone || "",
+                guideEmail: existing.guideEmail || "",
+                notes: existing.notes || "",
+                approved: existing.approved || false
+            });
+        } else {
+            setTravelGuideForm({
+                guideId: "",
+                guideName: "",
+                guidePhone: "",
+                guideEmail: "",
+                notes: "",
+                approved: false
+            });
+        }
+        
+        fetchTravelGuides();
+        setShowTravelGuideModal(true);
+    };
+
+    const handleCloseTravelGuideModal = () => {
+        setShowTravelGuideModal(false);
+        setSelectedSubmission(null);
+        setTravelGuideForm({
+            guideId: "",
+            guideName: "",
+            guidePhone: "",
+            guideEmail: "",
+            notes: "",
+            approved: false
+        });
+    };
+
+    const handleTravelGuideSelect = (guideId) => {
+        const guide = travelGuides.find(g => String(g.id) === String(guideId));
+        if (guide) {
+            setTravelGuideForm(prev => ({
+                ...prev,
+                guideId: guide.id,
+                guideName: guide.name,
+                guidePhone: guide.phone || "",
+                guideEmail: guide.email || ""
+            }));
+        } else {
+            setTravelGuideForm(prev => ({
+                ...prev,
+                guideId: "",
+                guideName: "",
+                guidePhone: "",
+                guideEmail: ""
+            }));
+        }
+    };
+
+    const handleSaveTravelGuideAssignment = async () => {
+        if (!selectedSubmission) return;
+        
+        const submissionId = selectedSubmission.id || selectedSubmission._id || `temp-${selectedSubmission.tempId}`;
+        
+        if (!travelGuideForm.guideName && !travelGuideForm.guideId) {
+            alert("Please select or enter a travel guide name");
+            return;
+        }
+
+        setGuideSaving(true);
+
+        // Look up the guide's image from the loaded travelGuides list
+        const guideObj = travelGuides.find(g => String(g.id) === String(travelGuideForm.guideId));
+
+        const assignment = {
+            submissionId,
+            guideId: travelGuideForm.guideId,
+            guideName: travelGuideForm.guideName,
+            guidePhone: travelGuideForm.guidePhone,
+            guideEmail: travelGuideForm.guideEmail,
+            guideImage: guideObj?.profile_image || null,
+            notes: travelGuideForm.notes,
+            approved: travelGuideForm.approved,
+            assignedAt: new Date().toISOString()
+        };
+
+        setTravelGuideAssignments(prev => ({
+            ...prev,
+            [submissionId]: assignment
+        }));
+
+        try {
+            const response = await axios.post(
+                `http://localhost:5000/api/forms/${submissionId}/assign-guide`,
+                {
+                    guideId: travelGuideForm.guideId,
+                    guideName: travelGuideForm.guideName,
+                    guidePhone: travelGuideForm.guidePhone,
+                    guideEmail: travelGuideForm.guideEmail,
+                    notes: travelGuideForm.notes,
+                    approved: travelGuideForm.approved
+                }
+            );
+
+            if (response.data.success) {
+                alert(
+                    `Travel guide "${travelGuideForm.guideName}" assigned` +
+                    (travelGuideForm.approved ? ' and guest approved' : '') +
+                    ' successfully.'
+                );
+            } else {
+                alert(`Server responded: ${response.data.message}`);
+            }
+        } catch (err) {
+            console.error('Error saving travel guide assignment:', err);
+            alert(
+                `Travel guide assigned locally. Server sync failed: ` +
+                `${err.response?.data?.message || err.message}`
+            );
+        } finally {
+            setGuideSaving(false);
+            handleCloseTravelGuideModal();
+        }
+    };
+
+    const handleRemoveTravelGuideAssignment = async (submissionId) => {
+        if (!window.confirm("Remove travel guide assignment from this guest?")) return;
+
+        setTravelGuideAssignments(prev => {
+            const next = { ...prev };
+            delete next[submissionId];
+            return next;
+        });
+
+        try {
+            await axios.delete(
+                `http://localhost:5000/api/forms/${submissionId}/assign-guide`
+            );
+        } catch (err) {
+            console.warn('Server remove failed:', err.message);
+            if (activeForm) fetchTravelGuideAssignments(activeForm);
+        }
+    };
+
+    // ==================== BULK TRAVEL GUIDE FUNCTIONS ====================
+    const handleOpenBulkTravelGuideModal = () => {
+        if (selectedRows.size === 0) {
+            alert("Please select at least one guest to assign a travel guide");
+            return;
+        }
+        setBulkTravelGuideForm({
+            guideId: "",
+            guideName: "",
+            guidePhone: "",
+            guideEmail: "",
+            notes: "",
+            approveAll: false
+        });
+        fetchTravelGuides();
+        setShowBulkTravelGuideModal(true);
+    };
+
+    const handleCloseBulkTravelGuideModal = () => {
+        setShowBulkTravelGuideModal(false);
+        setBulkTravelGuideForm({
+            guideId: "",
+            guideName: "",
+            guidePhone: "",
+            guideEmail: "",
+            notes: "",
+            approveAll: false
+        });
+    };
+
+    const handleBulkTravelGuideSelect = (guideId) => {
+        const guide = travelGuides.find(g => String(g.id) === String(guideId));
+        if (guide) {
+            setBulkTravelGuideForm(prev => ({
+                ...prev,
+                guideId: guide.id,
+                guideName: guide.name,
+                guidePhone: guide.phone || "",
+                guideEmail: guide.email || ""
+            }));
+        } else {
+            setBulkTravelGuideForm(prev => ({
+                ...prev,
+                guideId: "",
+                guideName: "",
+                guidePhone: "",
+                guideEmail: ""
+            }));
+        }
+    };
+
+    const handleSaveBulkTravelGuideAssignment = async () => {
+        if (!bulkTravelGuideForm.guideName && !bulkTravelGuideForm.guideId) {
+            alert("Please select or enter a travel guide name");
+            return;
+        }
+
+        const selectedIds = Array.from(selectedRows);
+        setBulkGuideSaving(true);
+
+        // Look up the guide's image from the loaded travelGuides list
+        const guideObj = travelGuides.find(g => String(g.id) === String(bulkTravelGuideForm.guideId));
+
+        const newAssignments = { ...travelGuideAssignments };
+        selectedIds.forEach(submissionId => {
+            newAssignments[submissionId] = {
+                submissionId,
+                guideId: bulkTravelGuideForm.guideId,
+                guideName: bulkTravelGuideForm.guideName,
+                guidePhone: bulkTravelGuideForm.guidePhone,
+                guideEmail: bulkTravelGuideForm.guideEmail,
+                guideImage: guideObj?.profile_image || null,
+                notes: bulkTravelGuideForm.notes,
+                approved: bulkTravelGuideForm.approveAll,
+                assignedAt: new Date().toISOString()
+            };
+        });
+        setTravelGuideAssignments(newAssignments);
+
+        try {
+            const response = await axios.post(
+                `http://localhost:5000/api/forms/bulk-assign-guide`,
+                {
+                    submissionIds: selectedIds,
+                    guideId: bulkTravelGuideForm.guideId,
+                    guideName: bulkTravelGuideForm.guideName,
+                    guidePhone: bulkTravelGuideForm.guidePhone,
+                    guideEmail: bulkTravelGuideForm.guideEmail,
+                    notes: bulkTravelGuideForm.notes,
+                    approved: bulkTravelGuideForm.approveAll
+                }
+            );
+
+            if (response.data.success) {
+                alert(
+                    `Travel guide "${bulkTravelGuideForm.guideName}" assigned to ` +
+                    `${selectedIds.length} guest(s)` +
+                    (bulkTravelGuideForm.approveAll ? ' and all approved.' : '.')
+                );
+            } else {
+                alert(`Server responded: ${response.data.message}`);
+            }
+        } catch (err) {
+            console.error('Error bulk assigning travel guide:', err);
+            alert(
+                `Travel guide assigned locally to ${selectedIds.length} guest(s). ` +
+                `Server sync failed: ${err.response?.data?.message || err.message}`
+            );
+        } finally {
+            setBulkGuideSaving(false);
+            handleCloseBulkTravelGuideModal();
+            clearAllSelections();
+        }
+    };
+
+    // ==================== GUIDE IMAGE FUNCTIONS ====================
+    const handlePickNewGuideImage = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            alert('Image must be under 5 MB');
+            return;
+        }
+        setNewGuideImageFile(file);
+        setNewGuideImagePreview(URL.createObjectURL(file));
+    };
+
+    const uploadGuideImage = async (guideId, file) => {
+        const formData = new FormData();
+        formData.append('image', file);
+        setUploadingImageFor(guideId);
+        try {
+            const res = await axios.post(
+                `http://localhost:5000/api/travel-guides/${guideId}/image`,
+                formData,
+                { headers: { 'Content-Type': 'multipart/form-data' } }
+            );
+            if (res.data.success) {
+                await fetchTravelGuides();
+                return res.data.profile_image;
+            }
+        } catch (err) {
+            console.error('Image upload failed:', err);
+            alert(err.response?.data?.message || 'Failed to upload image');
+        } finally {
+            setUploadingImageFor(null);
+        }
+        return null;
+    };
+
+    const removeGuideImage = async (guide) => {
+        if (!window.confirm(`Remove profile image for ${guide.name}?`)) return;
+        try {
+            const res = await axios.delete(
+                `http://localhost:5000/api/travel-guides/${guide.id}/image`
+            );
+            if (res.data.success) {
+                await fetchTravelGuides();
+            }
+        } catch (err) {
+            alert(err.response?.data?.message || 'Failed to remove image');
+        }
+    };
+
+    // ==================== MANAGE GUIDES FUNCTIONS ====================
+    const handleCreateGuide = async () => {
+        if (!newGuide.name.trim() || !newGuide.username.trim() || !newGuide.password.trim()) {
+            alert("Name, username and password are required");
+            return;
+        }
+        if (newGuide.password.length < 6) {
+            alert("Password must be at least 6 characters");
+            return;
+        }
+        setCreatingGuide(true);
+        try {
+            const response = await axios.post(
+                "http://localhost:5000/api/travel-guides",
+                newGuide
+            );
+            if (response.data.success) {
+                const createdGuide = response.data.guide;
+
+                // Upload image if user picked one
+                if (newGuideImageFile && createdGuide?.id) {
+                    await uploadGuideImage(createdGuide.id, newGuideImageFile);
+                }
+
+                alert("Travel guide created successfully");
+                setNewGuide({
+                    name: "", phone: "", email: "",
+                    username: "", password: "", city: ""
+                });
+                setNewGuideImageFile(null);
+                setNewGuideImagePreview(null);
+                fetchTravelGuides();
+            } else {
+                alert(response.data.message || "Failed to create guide");
+            }
+        } catch (err) {
+            console.error("Error creating guide:", err);
+            alert(err.response?.data?.message || "Failed to create guide");
+        } finally {
+            setCreatingGuide(false);
+        }
+    };
+
+    const handleDeleteGuide = async (guide) => {
+        if (!window.confirm(`Delete travel guide "${guide.name}"? This cannot be undone.`)) return;
+        try {
+            const response = await axios.delete(
+                `http://localhost:5000/api/travel-guides/${guide.id}`
+            );
+            if (response.data.success) {
+                alert("Travel guide deleted");
+                fetchTravelGuides();
+            }
+        } catch (err) {
+            console.error("Error deleting guide:", err);
+            alert(err.response?.data?.message || "Failed to delete guide");
+        }
+    };
+
+    const handleResetGuidePassword = async () => {
+        if (!resetPwGuide) return;
+        if (!newPassword || newPassword.length < 6) {
+            alert("New password must be at least 6 characters");
+            return;
+        }
+        try {
+            const response = await axios.post(
+                `http://localhost:5000/api/travel-guides/${resetPwGuide.id}/reset-password`,
+                { newPassword }
+            );
+            if (response.data.success) {
+                alert(`Password reset for ${resetPwGuide.name}`);
+                setResetPwGuide(null);
+                setNewPassword("");
+            }
+        } catch (err) {
+            console.error("Error resetting password:", err);
+            alert(err.response?.data?.message || "Failed to reset password");
+        }
+    };
+
+    const handleStartEditGuide = (guide) => {
+        setEditingGuide(guide);
+        setEditGuideForm({
+            name: guide.name || "",
+            phone: guide.phone || "",
+            email: guide.email || "",
+            username: guide.username || "",
+            city: guide.city || "",
+            status: guide.status || "active"
+        });
+    };
+
+    const handleSaveEditGuide = async () => {
+        if (!editingGuide) return;
+        try {
+            const response = await axios.put(
+                `http://localhost:5000/api/travel-guides/${editingGuide.id}`,
+                editGuideForm
+            );
+            if (response.data.success) {
+                alert("Travel guide updated");
+                setEditingGuide(null);
+                fetchTravelGuides();
+            }
+        } catch (err) {
+            console.error("Error updating guide:", err);
+            alert(err.response?.data?.message || "Failed to update guide");
+        }
+    };
+
     // ==================== RENDER LABEL POPUP ====================
     const renderLabelPopup = () => {
         if (!showLabelPopup) return null;
@@ -599,7 +1094,6 @@ const FormSubmissionsPage = () => {
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                 <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
-                    {/* Header */}
                     <div className="p-4 border-b flex justify-between items-center">
                         <div>
                             <h2 className="text-lg font-semibold flex items-center">
@@ -618,9 +1112,7 @@ const FormSubmissionsPage = () => {
                         </button>
                     </div>
 
-                    {/* Content */}
                     <div className="p-4 overflow-y-auto max-h-[60vh]">
-                        {/* Label Text */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Label Text *
@@ -639,7 +1131,6 @@ const FormSubmissionsPage = () => {
                             </div>
                         </div>
 
-                        {/* Color Selection */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Label Color
@@ -661,7 +1152,6 @@ const FormSubmissionsPage = () => {
                             </div>
                         </div>
 
-                        {/* Priority Selection */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Priority Level
@@ -684,7 +1174,6 @@ const FormSubmissionsPage = () => {
                             </div>
                         </div>
 
-                        {/* File Attachment */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Attach Files (Optional)
@@ -704,7 +1193,6 @@ const FormSubmissionsPage = () => {
                                 </label>
                             </div>
 
-                            {/* Attached Files List */}
                             {attachedFiles.length > 0 && (
                                 <div className="mt-3 space-y-2">
                                     <p className="text-sm font-medium text-gray-700">Attached Files:</p>
@@ -729,7 +1217,6 @@ const FormSubmissionsPage = () => {
                             )}
                         </div>
 
-                        {/* Preview */}
                         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                             <p className="text-sm font-medium text-gray-700 mb-2">Label Preview:</p>
                             <div className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium"
@@ -750,7 +1237,6 @@ const FormSubmissionsPage = () => {
                         </div>
                     </div>
 
-                    {/* Footer */}
                     <div className="p-4 border-t flex justify-end space-x-3">
                         <button
                             onClick={handleCloseLabelPopup}
@@ -777,7 +1263,6 @@ const FormSubmissionsPage = () => {
         navigate('/QCPage', { state: { submissions } });
     };
 
-    // Helper function to get passport field value
     const getPassportFieldValue = (value, columnLabel) => {
         if (!value) return 'N/A';
         
@@ -799,7 +1284,6 @@ const FormSubmissionsPage = () => {
         return fieldValue !== undefined && fieldValue !== null && fieldValue !== '' ? fieldValue : 'N/A';
     };
 
-    // Calculate stats from submissions
     const calculateStats = (submissionsData) => {
         const total = submissionsData.length;
         const pendingQC = submissionsData.filter(sub => 
@@ -821,7 +1305,6 @@ const FormSubmissionsPage = () => {
         });
     };
 
-    // Age categorization function
     const getAgeCategory = (dobString) => {
         if (!dobString || dobString === 'N/A') return 'N/A';
         
@@ -864,14 +1347,12 @@ const FormSubmissionsPage = () => {
         const currentPageRows = currentSubmissions.map(sub => sub.id || sub._id || `temp-${sub.tempId}`);
         
         if (isAllSelected) {
-            // Deselect all on current page
             setSelectedRows(prev => {
                 const newSet = new Set(prev);
                 currentPageRows.forEach(id => newSet.delete(id));
                 return newSet;
             });
         } else {
-            // Select all on current page
             setSelectedRows(prev => {
                 const newSet = new Set(prev);
                 currentPageRows.forEach(id => newSet.add(id));
@@ -884,10 +1365,8 @@ const FormSubmissionsPage = () => {
         const allIds = filteredSubmissions.map(sub => sub.id || sub._id || `temp-${sub.tempId}`);
         
         if (selectedRows.size === allIds.length) {
-            // Deselect all across all pages
             clearAllSelections();
         } else {
-            // Select all across all pages
             setSelectedRows(new Set(allIds));
         }
     };
@@ -896,7 +1375,6 @@ const FormSubmissionsPage = () => {
         setSelectedRows(new Set());
     };
 
-    // ==================== BULK DELETE FUNCTION ====================
     const handleBulkDelete = async () => {
         const selectedIds = Array.from(selectedRows);
         
@@ -911,14 +1389,12 @@ const FormSubmissionsPage = () => {
 
         setBulkDeleting(true);
         try {
-            // Delete each selected submission
             const deletePromises = selectedIds.map(id => 
-                axios.delete(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${id}/submissionsRowDelete`)
+                axios.delete(`http://localhost:5000/api/forms/${id}/submissionsRowDelete`)
             );
             
             const results = await Promise.allSettled(deletePromises);
             
-            // Check results
             const successfulDeletes = results.filter(result => 
                 result.status === 'fulfilled' && result.value.data.success
             );
@@ -927,18 +1403,11 @@ const FormSubmissionsPage = () => {
                 result.status === 'rejected' || (result.status === 'fulfilled' && !result.value.data.success)
             );
             
-            // Update state
             if (successfulDeletes.length > 0) {
                 setSubmissions(prev => prev.filter(sub => !selectedIds.includes(sub.id)));
                 setTotalItems(prev => prev - successfulDeletes.length);
-                
-                // Clear selections
                 clearAllSelections();
-                
-                // Show success message
                 alert(`Successfully deleted ${successfulDeletes.length} submission(s).`);
-                
-                // Refresh data
                 fetchSubmissions(activeForm);
             }
             
@@ -954,7 +1423,6 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // ==================== BULK ACTIONS TOOLBAR COMPONENT ====================
     const BulkActionsToolbar = () => {
         const selectedCount = selectedRows.size;
         
@@ -991,6 +1459,14 @@ const FormSubmissionsPage = () => {
                     
                     <div className="flex items-center space-x-3">
                         <button
+                            onClick={handleOpenBulkTravelGuideModal}
+                            className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+                        >
+                            <Users size={16} className="mr-2" />
+                            Assign Guide to {selectedCount}
+                        </button>
+
+                        <button
                             onClick={handleOpenLabelPopup}
                             className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
                         >
@@ -1021,7 +1497,6 @@ const FormSubmissionsPage = () => {
         );
     };
 
-    // ==================== RENDER CHECKBOX CELL ====================
     const renderCheckboxCell = (submission) => {
         const submissionId = submission.id || submission._id || `temp-${submission.tempId}`;
         const isSelected = selectedRows.has(submissionId);
@@ -1039,7 +1514,6 @@ const FormSubmissionsPage = () => {
         );
     };
 
-    // ==================== RENDER LABELS CELL ====================
     const renderLabelsCell = (submission) => {
         const submissionId = submission.id || submission._id || `temp-${submission.tempId}`;
         const submissionLabels = labels[submissionId] || [];
@@ -1073,18 +1547,72 @@ const FormSubmissionsPage = () => {
         );
     };
 
-    // Fetch forms for the lead
+    const renderTravelGuideCell = (submission) => {
+        const submissionId = submission.id || submission._id || `temp-${submission.tempId}`;
+        const assignment = travelGuideAssignments[submissionId];
+        
+        return (
+            <td key="travelGuide" className="px-4 py-0 text-center whitespace-nowrap text-[10px]">
+                {assignment ? (
+                    <div className="flex flex-col items-center gap-1 min-w-[120px]">
+                        <div className="flex items-center gap-1 justify-center">
+                            {assignment.guideImage ? (
+                                <img
+                                    src={getImageUrl(assignment.guideImage)}
+                                    alt={assignment.guideName}
+                                    className="w-5 h-5 rounded-full object-cover border border-blue-200"
+                                />
+                            ) : (
+                                <Users size={10} className="text-blue-600" />
+                            )}
+                            <span className="font-medium text-blue-700">{assignment.guideName}</span>
+                        </div>
+                        {assignment.approved && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-[9px] font-medium">
+                                <CheckCircle size={8} />
+                                Approved
+                            </span>
+                        )}
+                        <div className="flex gap-1">
+                            <button
+                                onClick={() => handleOpenTravelGuideModal(submission)}
+                                className="text-blue-600 hover:text-blue-800 p-0.5"
+                                title="Edit assignment"
+                            >
+                                <Edit size={10} />
+                            </button>
+                            <button
+                                onClick={() => handleRemoveTravelGuideAssignment(submissionId)}
+                                className="text-red-600 hover:text-red-800 p-0.5"
+                                title="Remove assignment"
+                            >
+                                <X size={10} />
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => handleOpenTravelGuideModal(submission)}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded border border-dashed border-gray-300 text-gray-500 hover:border-blue-500 hover:text-blue-600 text-[9px]"
+                    >
+                        <Plus size={10} />
+                        Assign Guide
+                    </button>
+                )}
+            </td>
+        );
+    };
+
     const fetchForms = async () => {
         try {
             setFormsLoading(true);
             const response = await axios.get(
-                `https://tableware-dweeb-estate.ngrok-free.dev/api/forms/lead-submissions/${id}`
+                `http://localhost:5000/api/forms/lead-submissions/${id}`
             );
             if (response.data.success) {
                 const formsData = response.data.forms;
                 setForms(formsData);
                 
-                // Set active form to first form if available
                 if (formsData.length > 0) {
                     setActiveForm(formsData[0].id);
                 } else {
@@ -1101,7 +1629,6 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // Fetch submissions for active form
     const fetchSubmissions = async (formId = null) => {
         const formToFetch = formId || activeForm;
         if (!formToFetch) {
@@ -1115,7 +1642,7 @@ const FormSubmissionsPage = () => {
 
         try {
             setLoading(true);
-            const res = await axios.get(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${formToFetch}/submissions`);
+            const res = await axios.get(`http://localhost:5000/api/forms/${formToFetch}/submissions`);
             console.log('API Response for form', formToFetch, ':', res.data);
             
             if (res.data.success && res.data.submissions.length > 0) {
@@ -1123,17 +1650,16 @@ const FormSubmissionsPage = () => {
                 setSubmissions(apiSubmissions);
                 setTotalItems(apiSubmissions.length);
                 calculateStats(apiSubmissions);
-                // Clear selections when data changes
                 clearAllSelections();
 
-                // Reset columns for new form
+                fetchTravelGuideAssignments(formToFetch);
+
                 const firstSubmission = apiSubmissions[0];
                 const fieldLabels = [];
                 const fieldOrderArray = [];
                 const initialColumns = [];
                 const filterFields = [];
 
-                // Add checkbox column
                 initialColumns.push({ 
                     id: 'checkbox', 
                     label: 'Select', 
@@ -1141,7 +1667,6 @@ const FormSubmissionsPage = () => {
                     type: 'checkbox'
                 });
 
-                // Add labels column
                 initialColumns.push({ 
                     id: 'labels', 
                     label: 'Labels', 
@@ -1149,10 +1674,15 @@ const FormSubmissionsPage = () => {
                     type: 'labels'
                 });
 
-                // Add index column
+                initialColumns.push({ 
+                    id: 'travelGuide', 
+                    label: 'Travel Guide', 
+                    visible: true,
+                    type: 'travelGuide'
+                });
+
                 initialColumns.push({ id: 'index', label: 'SR No.', visible: true });
 
-                // Add status column
                 initialColumns.push({ 
                     id: 'status', 
                     label: 'QC Status', 
@@ -1160,7 +1690,6 @@ const FormSubmissionsPage = () => {
                     type: 'status'
                 });
 
-                // Process form fields
                 if (firstSubmission.data && Array.isArray(firstSubmission.data)) {
                     firstSubmission.data.forEach(item => {
                         if (item.type === 'banner' || item.type === 'paragraph' || item.type === 'heading') {
@@ -1311,7 +1840,6 @@ const FormSubmissionsPage = () => {
                     });
                 }
 
-                // Add actions column
                 initialColumns.push({ id: 'actions', label: 'Actions', visible: true });
 
                 setHeaders(fieldLabels);
@@ -1319,10 +1847,9 @@ const FormSubmissionsPage = () => {
                 setAvailableFilterFields(filterFields);
                 setColumns(initialColumns);
 
-                // Initialize duplicate detection
                 const commonDuplicateFields = initialColumns
                     .filter(col => 
-                        !['checkbox', 'labels', 'index', 'actions', 'status'].includes(col.id) && 
+                        !['checkbox', 'labels', 'travelGuide', 'index', 'actions', 'status'].includes(col.id) && 
                         !col.label.includes('Front') && 
                         !col.label.includes('Back') &&
                         col.type !== 'file-upload'
@@ -1357,7 +1884,6 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // Handle form tab click
     const handleFormTabClick = (formId) => {
         setActiveForm(formId);
         clearAllSelections();
@@ -1417,7 +1943,6 @@ const FormSubmissionsPage = () => {
         const savedColumns = localStorage.getItem(`formSubmissionsColumns_${id}`);
         if (savedColumns) {
             const parsedColumns = JSON.parse(savedColumns);
-            // Ensure checkbox column exists
             if (!parsedColumns.find(col => col.id === 'checkbox')) {
                 parsedColumns.unshift({ 
                     id: 'checkbox', 
@@ -1426,13 +1951,20 @@ const FormSubmissionsPage = () => {
                     type: 'checkbox'
                 });
             }
-            // Ensure labels column exists
             if (!parsedColumns.find(col => col.id === 'labels')) {
                 parsedColumns.splice(1, 0, { 
                     id: 'labels', 
                     label: 'Labels', 
                     visible: true,
                     type: 'labels'
+                });
+            }
+            if (!parsedColumns.find(col => col.id === 'travelGuide')) {
+                parsedColumns.splice(2, 0, { 
+                    id: 'travelGuide', 
+                    label: 'Travel Guide', 
+                    visible: true,
+                    type: 'travelGuide'
                 });
             }
             setColumns(parsedColumns);
@@ -1457,7 +1989,6 @@ const FormSubmissionsPage = () => {
         }
     }, [filteredSubmissions, duplicateConfig.enabled, duplicateConfig.fields]);
 
-    // Task Management Functions
     const handleOpenTasks = (submission) => {
         setSelectedSubmission(submission);
         const mockTasks = [
@@ -1510,7 +2041,6 @@ const FormSubmissionsPage = () => {
         setEditingTaskId(null);
     };
 
-    // Duplicate detection function
     const detectDuplicates = () => {
         if (!duplicateConfig.enabled || duplicateConfig.fields.length === 0) {
             setDuplicateConfig(prev => ({ ...prev, duplicates: {}, groupColors: {} }));
@@ -1560,7 +2090,6 @@ const FormSubmissionsPage = () => {
         '#c6f6d5', '#fed7d7', '#c6f6f6', '#fbb6ce', '#ecc94b',
     ];
 
-    // Get field value for duplicate detection
     const getFieldValueForDuplicate = (field, column) => {
         if (!field) return '';
         
@@ -1582,7 +2111,6 @@ const FormSubmissionsPage = () => {
         return value || '';
     };
 
-    // Check if a row has duplicates and get its group info
     const getDuplicateGroupInfo = (submissionId) => {
         for (const [key, ids] of Object.entries(duplicateConfig.duplicates)) {
             if (ids.includes(submissionId)) {
@@ -1597,7 +2125,6 @@ const FormSubmissionsPage = () => {
         return { isDuplicate: false, groupKey: null, color: null, count: 0 };
     };
 
-    // Toggle duplicate detection
     const toggleDuplicateDetection = () => {
         setDuplicateConfig(prev => ({
             ...prev,
@@ -1605,7 +2132,6 @@ const FormSubmissionsPage = () => {
         }));
     };
 
-    // Add/remove field from duplicate detection
     const toggleDuplicateField = (fieldId) => {
         setDuplicateConfig(prev => {
             const newFields = prev.fields.includes(fieldId)
@@ -1619,11 +2145,9 @@ const FormSubmissionsPage = () => {
         });
     };
 
-    // Filter functions
     const applyFilters = () => {
         let filtered = [...submissions];
 
-        // Apply search term filter
         if (searchTerm.trim()) {
             filtered = filtered.filter(submission => 
                 submission.data.some(field => {
@@ -1633,7 +2157,6 @@ const FormSubmissionsPage = () => {
             );
         }
 
-        // Apply column filters
         Object.keys(filters).forEach(columnId => {
             const filterValue = filters[columnId];
             if (filterValue && filterValue.trim()) {
@@ -1652,7 +2175,6 @@ const FormSubmissionsPage = () => {
         setFilteredSubmissions(filtered);
         setTotalItems(filtered.length);
         setCurrentPage(1);
-        // Clear selections when filters change
         clearAllSelections();
     };
 
@@ -1702,13 +2224,11 @@ const FormSubmissionsPage = () => {
         return count;
     };
 
-    // Pagination calculations
     const totalPages = Math.ceil(totalItems / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentSubmissions = filteredSubmissions.slice(startIndex, endIndex);
 
-    // Pagination handlers
     const goToPage = (page) => {
         setCurrentPage(Math.max(1, Math.min(page, totalPages)));
     };
@@ -1735,7 +2255,6 @@ const FormSubmissionsPage = () => {
         setCurrentPage(1);
     };
 
-    // Generate page numbers for pagination
     const getPageNumbers = () => {
         const pages = [];
         const maxVisiblePages = 5;
@@ -1766,7 +2285,6 @@ const FormSubmissionsPage = () => {
         return pages;
     };
 
-    // Delete submission function
     const deleteSubmission = async (submissionId) => {
         if (!window.confirm('Are you sure you want to delete this submission? This action cannot be undone.')) {
             return;
@@ -1774,12 +2292,11 @@ const FormSubmissionsPage = () => {
 
         setDeletingId(submissionId);
         try {
-            const response = await axios.delete(`https://tableware-dweeb-estate.ngrok-free.dev/api/forms/${submissionId}/submissionsRowDelete`);
+            const response = await axios.delete(`http://localhost:5000/api/forms/${submissionId}/submissionsRowDelete`);
             
             if (response.data.success) {
                 setSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
                 setTotalItems(prev => prev - 1);
-                // Remove from selected rows if it was selected
                 setSelectedRows(prev => {
                     const newSet = new Set(prev);
                     newSet.delete(submissionId);
@@ -1801,7 +2318,6 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // Edit submission function
     const editSubmission = async (submissionId, fieldId, newValue, isIndividualField = false, subfield = null) => {
         setIsEditing(true);
         try {
@@ -1818,7 +2334,7 @@ const FormSubmissionsPage = () => {
                 };
             }
 
-            const response = await axios.put(`https://tableware-dweeb-estate.ngrok-free.dev/api/submissions/${submissionId}/edit`, payload);
+            const response = await axios.put(`http://localhost:5000/api/submissions/${submissionId}/edit`, payload);
 
             if (response.data.success) {
                 setSubmissions(prev => prev.map(sub => {
@@ -1862,19 +2378,16 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // Start editing a field
     const startEditing = (submissionId, fieldId, currentValue, fieldType = 'text') => {
         setEditingField({ submissionId, fieldId, fieldType });
         setEditValue(currentValue);
     };
 
-    // Start individual field editing
     const startIndividualEditing = (submissionId, fieldId, subfield, currentValue, fieldType = 'text') => {
         setIndividualEditing({ submissionId, fieldId, subfield, fieldType });
         setIndividualEditValue(currentValue);
     };
 
-    // Cancel editing
     const cancelEditing = () => {
         setEditingField(null);
         setEditValue('');
@@ -1882,14 +2395,12 @@ const FormSubmissionsPage = () => {
         setIndividualEditValue('');
     };
 
-    // Save edited value
     const saveEdit = () => {
         if (editingField && editValue.trim() !== '') {
             editSubmission(editingField.submissionId, editingField.fieldId, editValue.trim());
         }
     };
 
-    // Save individual field edit
     const saveIndividualEdit = () => {
         if (individualEditing && individualEditValue.trim() !== '') {
             editSubmission(
@@ -1902,7 +2413,6 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // Handle keyboard events
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
             if (editingField) {
@@ -1915,7 +2425,6 @@ const FormSubmissionsPage = () => {
         }
     };
 
-    // Export to Excel function
     const exportToExcel = () => {
         if (filteredSubmissions.length === 0) {
             alert('No data to export');
@@ -1923,12 +2432,15 @@ const FormSubmissionsPage = () => {
         }
 
         const excelData = filteredSubmissions.map((submission, index) => {
+            const submissionId = submission.id || submission._id || `temp-${submission.tempId}`;
             const rowData = {
                 '#': index + 1,
                 'QC Status': statusConfig[submission.status || submission.qc_status]?.label || 'Pending',
                 'QC Notes': submission.qc_notes || submission.notes || '',
                 'Reviewed By': submission.reviewed_by || 'Not reviewed',
-                'Review Date': submission.qc_review_date ? new Date(submission.qc_review_date).toLocaleDateString() : 'Not reviewed'
+                'Review Date': submission.qc_review_date ? new Date(submission.qc_review_date).toLocaleDateString() : 'Not reviewed',
+                'Travel Guide': travelGuideAssignments[submissionId]?.guideName || 'Not assigned',
+                'Guide Approved': travelGuideAssignments[submissionId]?.approved ? 'Yes' : 'No'
             };
 
             fieldOrder.forEach((fieldInfo, idx) => {
@@ -1948,7 +2460,6 @@ const FormSubmissionsPage = () => {
         XLSX.writeFile(wb, fileName);
     };
 
-    // Get field value for export
     const getFieldExportValue = (field) => {
         if (!field) return 'N/A';
 
@@ -2002,7 +2513,6 @@ const FormSubmissionsPage = () => {
         return displayValue || 'N/A';
     };
 
-    // File import handler
     const handleFileImport = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -2067,7 +2577,7 @@ const FormSubmissionsPage = () => {
                         client_coordinator: 'Imported',
                         status: 'pending',
                         qc_status: 'pending',
-                        tempId: Date.now() + index // Temporary ID for imported items
+                        tempId: Date.now() + index
                     };
                 });
 
@@ -2084,7 +2594,6 @@ const FormSubmissionsPage = () => {
         reader.readAsArrayBuffer(file);
     };
 
-    // Column management functions
     const toggleColumnVisibility = (columnId) => {
         setColumns(columns.map(column =>
             column.id === columnId ? { ...column, visible: !column.visible } : column
@@ -2126,6 +2635,12 @@ const FormSubmissionsPage = () => {
                 label: 'Labels', 
                 visible: true,
                 type: 'labels'
+            },
+            { 
+                id: 'travelGuide', 
+                label: 'Travel Guide', 
+                visible: true,
+                type: 'travelGuide'
             },
             { id: 'index', label: 'SR No.', visible: true }
         ];
@@ -2262,7 +2777,6 @@ const FormSubmissionsPage = () => {
         return String(obj);
     };
 
-    // Get specific field value for complex fields
     const getComplexFieldValue = (field, columnLabel, column) => {
         if (!field || !field.value) return 'N/A';
 
@@ -2319,7 +2833,6 @@ const FormSubmissionsPage = () => {
         return 'N/A';
     };
 
-    // Get raw field value for complex fields (without formatting)
     const getRawComplexFieldValue = (field, columnLabel) => {
         if (!field || !field.value) return 'N/A';
 
@@ -2363,10 +2876,9 @@ const FormSubmissionsPage = () => {
         return 'N/A';
     };
 
-    // Check if field is editable
     const isFieldEditable = (column) => {
-        const nonEditableTypes = ['file-upload', 'aadhar_front', 'aadhar_back', 'passport_front', 'passport_back', 'status', 'checkbox', 'labels'];
-        const nonEditableLabels = ['Aadhar Front', 'Aadhar Back', 'Passport Front', 'Passport Back', 'QC Status', 'Select', 'Labels'];
+        const nonEditableTypes = ['file-upload', 'aadhar_front', 'aadhar_back', 'passport_front', 'passport_back', 'status', 'checkbox', 'labels', 'travelGuide'];
+        const nonEditableLabels = ['Aadhar Front', 'Aadhar Back', 'Passport Front', 'Passport Back', 'QC Status', 'Select', 'Labels', 'Travel Guide'];
         
         return !nonEditableTypes.includes(column.type) && 
                !nonEditableLabels.includes(column.label) &&
@@ -2374,13 +2886,11 @@ const FormSubmissionsPage = () => {
                column.id !== 'actions';
     };
 
-    // Check if individual field is editable
     const isIndividualFieldEditable = (column) => {
         const complexFieldTypes = ['aadhar', 'ocr-aadhar', 'passport', 'ocr-password', 'nearest-airport', 'address'];
         return complexFieldTypes.includes(column.type) && column.subfield;
     };
 
-    // Get status display component
     const getStatusDisplay = (submission) => {
         const status = submission.status || submission.qc_status || 'pending';
         const config = statusConfig[status] || statusConfig.pending;
@@ -2434,7 +2944,6 @@ const FormSubmissionsPage = () => {
         );
     };
 
-    // Render editable field with edit icon
     const renderEditableField = (value, submissionId, column, field = null) => {
         const isEditingThisField = editingField && 
             editingField.submissionId === submissionId && 
@@ -2488,7 +2997,6 @@ const FormSubmissionsPage = () => {
         );
     };
 
-    // Render individual field for complex objects
     const renderIndividualField = (value, submissionId, column, field = null) => {
         const isEditingThisField = individualEditing && 
             individualEditing.submissionId === submissionId && 
@@ -2650,7 +3158,6 @@ const FormSubmissionsPage = () => {
         );
     };
 
-    // Loading state
     if (formsLoading) {
         return (
             <div className="px-3 pb-6">
@@ -2718,7 +3225,6 @@ const FormSubmissionsPage = () => {
                         </div>
                     ) : (
                         <>
-                            {/* Dynamic Form Tabs */}
                             <div className="flex items-end relative mb-4 overflow-x-auto">
                                 {forms.map((form, index) => {
                                     const isActive = activeForm === form.id;
@@ -2749,7 +3255,6 @@ const FormSubmissionsPage = () => {
                                 })}
                             </div>
 
-                            {/* Stats Cards Section */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                                 <StatsCard
                                     title="Total Entries"
@@ -2785,10 +3290,8 @@ const FormSubmissionsPage = () => {
                                 />
                             </div>
 
-                            {/* Bulk Actions Toolbar */}
                             <BulkActionsToolbar />
 
-                            {/* Form Actions Bar */}
                             <div className="flex justify-end items-center mb-4">
                                 <div className="flex space-x-1">
                                     <button
@@ -2815,6 +3318,16 @@ const FormSubmissionsPage = () => {
                                         <GripVertical size={10} className="" />
                                         Manage Columns
                                     </button>
+
+                                    <button
+                                        onClick={() => setShowManageGuidesModal(true)}
+                                        className="flex items-center border border-indigo-600 text-black-700 px-1 py-1 rounded-[5px] hover:bg-indigo-700 transition-colors text-[10px] h-[24px]"
+                                        title="Create / edit travel guides"
+                                    >
+                                        <Users size={10} className="" />
+                                        Manage Guides
+                                    </button>
+
                                     <button
                                         onClick={() => setShowImportModal(true)}
                                         className="flex items-center border border-blue-600 text-black-700 px-1 py-1 rounded-[5px] hover:bg-blue-700 transition-colors text-[10px] h-[24px]"
@@ -2831,12 +3344,6 @@ const FormSubmissionsPage = () => {
                                     </button>
 
                                     <button
-                                        className="flex items-center border border-green-600 text-black-700 px-1 py-1 rounded-[5px] hover:bg-green-700 transition-colors text-[10px] h-[24px]"
-                                    >
-                                        <Settings size={10} className="" />
-                                        Setting
-                                    </button>
-                                    <button
                                         onClick={() => setOn(!on)}
                                         className={`relative inline-flex h-4 w-8 items-center rounded-full transition-colors
                                             ${on ? "bg-green-500" : "bg-gray-300"}`}
@@ -2849,14 +3356,12 @@ const FormSubmissionsPage = () => {
                                 </div>
                             </div>
 
-                            {/* Show loading when fetching submissions */}
                             {loading ? (
                                 <div className="text-center p-8">
                                     Loading submissions for form #{activeForm}...
                                 </div>
                             ) : (
                                 <>
-                                    {/* Duplicate Configuration Panel */}
                                     {duplicateConfig.enabled && (
                                         <div className="mb-6 p-4 bg-yellow-50 rounded-lg shadow border border-yellow-200">
                                             <div className="flex items-center justify-between mb-3">
@@ -2875,7 +3380,7 @@ const FormSubmissionsPage = () => {
                                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2">
                                                 {columns
                                                     .filter(col => 
-                                                        !['checkbox', 'labels', 'index', 'actions', 'status'].includes(col.id) && 
+                                                        !['checkbox', 'labels', 'travelGuide', 'index', 'actions', 'status'].includes(col.id) && 
                                                         !col.label.includes('Front') && 
                                                         !col.label.includes('Back') &&
                                                         col.type !== 'file-upload'
@@ -2894,7 +3399,6 @@ const FormSubmissionsPage = () => {
                                                 }
                                             </div>
 
-                                            {/* Color Legend */}
                                             {Object.keys(duplicateConfig.duplicates).length > 0 && (
                                                 <div className="mt-4 pt-3 border-t border-yellow-200">
                                                     <h4 className="text-sm font-semibold text-yellow-800 mb-2">Duplicate Groups Legend:</h4>
@@ -2922,7 +3426,6 @@ const FormSubmissionsPage = () => {
                                         </div>
                                     )}
 
-                                    {/* Table Content */}
                                     {filteredSubmissions.length === 0 ? (
                                         <div className="text-center text-lg p-8 bg-gray-100 rounded-lg">
                                             {submissions.length === 0 ? (
@@ -2984,6 +3487,10 @@ const FormSubmissionsPage = () => {
                                                                         return renderLabelsCell(submission);
                                                                     }
 
+                                                                    if (column.id === 'travelGuide') {
+                                                                        return renderTravelGuideCell(submission);
+                                                                    }
+
                                                                     if (column.id === 'index') {
                                                                         return (
                                                                             <td key={column.id} className=" px-4 py-0 text-center font-medium whitespace-nowrap text-[10px]">
@@ -3001,7 +3508,6 @@ const FormSubmissionsPage = () => {
                                                                         );
                                                                     }
 
-                                                                    // Status Column
                                                                     if (column.id === 'status') {
                                                                         return (
                                                                             <td key={column.id} className=" px-4 py-0 text-center whitespace-nowrap text-[10px]">
@@ -3011,6 +3517,7 @@ const FormSubmissionsPage = () => {
                                                                     }
 
                                                                     if (column.id === 'actions') {
+                                                                        const hasGuide = !!travelGuideAssignments[submissionId];
                                                                         return (
                                                                             <td key={column.id} className=" px-4 py-0 h-[10px] text-center whitespace-nowrap">
                                                                                 <div className="flex justify-center space-x-2">
@@ -3029,6 +3536,23 @@ const FormSubmissionsPage = () => {
                                                                                     >
                                                                                         <Send size={18} />
                                                                                     </button>
+
+                                                                                    <button
+                                                                                        onClick={() => handleOpenTravelGuideModal(submission)}
+                                                                                        className={`p-1 ${
+                                                                                            hasGuide
+                                                                                                ? 'text-green-600 hover:text-green-800'
+                                                                                                : 'text-purple-600 hover:text-purple-800'
+                                                                                        }`}
+                                                                                        title={
+                                                                                            hasGuide
+                                                                                                ? 'Edit Travel Guide Assignment'
+                                                                                                : 'Assign Travel Guide & Approve'
+                                                                                        }
+                                                                                    >
+                                                                                        <Users size={18} />
+                                                                                    </button>
+
                                                                                     <button
                                                                                         onClick={() => deleteSubmission(submission.id)}
                                                                                         disabled={deletingId === submission.id}
@@ -3050,7 +3574,6 @@ const FormSubmissionsPage = () => {
                                                                     
                                                                     return (
                                                                         <td key={column.id} className=" px-4 py-0 h-[10px] text-center whitespace-nowrap">
-                                                                            {/* Aadhar Fields */}
                                                                             {(column.type === 'aadhar' || column.type === 'ocr-aadhar') && (
                                                                                 <>
                                                                                     {['Aadhar Front', 'Aadhar Back'].includes(column.label) ? (
@@ -3069,7 +3592,6 @@ const FormSubmissionsPage = () => {
                                                                                 </>
                                                                             )}
 
-                                                                            {/* Passport Fields */}
                                                                             {(column.type === 'passport' || column.type === 'ocr-password') && (
                                                                                 <>
                                                                                     {['Passport Front', 'Passport Back'].includes(column.label) ? (
@@ -3088,7 +3610,6 @@ const FormSubmissionsPage = () => {
                                                                                 </>
                                                                             )}
 
-                                                                            {/* Airport Fields */}
                                                                             {column.type === 'nearest-airport' && (
                                                                                 renderIndividualField(
                                                                                     getComplexFieldValue(field, column.label, column),
@@ -3098,7 +3619,6 @@ const FormSubmissionsPage = () => {
                                                                                 )
                                                                             )}
 
-                                                                            {/* Address Fields */}
                                                                             {column.type === 'address' && (
                                                                                 renderIndividualField(
                                                                                     getComplexFieldValue(field, column.label, column),
@@ -3108,12 +3628,10 @@ const FormSubmissionsPage = () => {
                                                                                 )
                                                                             )}
 
-                                                                            {/* File Upload Fields */}
                                                                             {column.type === 'file-upload' && (
                                                                                 renderFileUploadField(field?.value)
                                                                             )}
 
-                                                                            {/* Default Fields */}
                                                                             {!['aadhar', 'ocr-aadhar', 'passport', 'ocr-password', 'nearest-airport', 'address', 'file-upload'].includes(column.type) && field && (
                                                                                 renderEditableField(
                                                                                     typeof field.value === 'object' ? 
@@ -3125,7 +3643,6 @@ const FormSubmissionsPage = () => {
                                                                                 )
                                                                             )}
 
-                                                                            {/* No Field Found */}
                                                                             {!field && (
                                                                                 <div className="text-gray-400">N/A</div>
                                                                             )}
@@ -3140,7 +3657,6 @@ const FormSubmissionsPage = () => {
                                         </div>
                                     )}
 
-                                    {/* Pagination Controls - Bottom */}
                                     {filteredSubmissions.length > 0 && (
                                         <div className="flex flex-col sm:flex-row justify-between items-center mt-4 p-4 rounded-lg">
                                             <div className="flex items-center space-x-4 mb-2 sm:mb-0">
@@ -3227,10 +3743,8 @@ const FormSubmissionsPage = () => {
                                         </div>
                                     )}
 
-                                    {/* Label Popup */}
                                     {renderLabelPopup()}
 
-                                    {/* Task Management Drawer */}
                                     <TaskManagementDrawer
                                         isOpen={isTaskDrawerOpen}
                                         onClose={closeTaskDrawer}
@@ -3243,7 +3757,664 @@ const FormSubmissionsPage = () => {
                                         setEditingTaskId={setEditingTaskId}
                                     />
 
-                                    {/* Import Modal */}
+                                    {/* Single Travel Guide Assignment Modal */}
+                                    {showTravelGuideModal && selectedSubmission && (
+                                        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+                                            <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h2 className="text-xl font-bold text-blue-600 flex items-center gap-2">
+                                                        <Users size={20} />
+                                                        Assign Travel Guide
+                                                    </h2>
+                                                    <button
+                                                        className="text-gray-700 hover:text-red-600"
+                                                        onClick={handleCloseTravelGuideModal}
+                                                    >
+                                                        <X size={24} />
+                                                    </button>
+                                                </div>
+                                                
+                                                <p className="text-sm text-gray-600 mb-4">
+                                                    Submission: <span className="font-medium">
+                                                        #{selectedSubmission.id || selectedSubmission._id || selectedSubmission.tempId}
+                                                    </span>
+                                                </p>
+                                                
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Select Existing Guide
+                                                    </label>
+                                                    {guidesLoading ? (
+                                                        <div className="text-sm text-gray-500">Loading guides...</div>
+                                                    ) : (
+                                                        <select
+                                                            value={travelGuideForm.guideId}
+                                                            onChange={(e) => handleTravelGuideSelect(e.target.value)}
+                                                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        >
+                                                            <option value="">-- Select a guide --</option>
+                                                            {travelGuides.map(guide => (
+                                                                <option key={guide.id} value={guide.id}>
+                                                                    {guide.name}
+                                                                    {guide.profile_image ? ' 📷' : ''}
+                                                                    {guide.phone ? ` (${guide.phone})` : ''}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    )}
+                                                </div>
+                                                
+                                                <div className="text-center text-xs text-gray-400 mb-4">— OR enter manually —</div>
+                                                
+                                                <div className="grid grid-cols-2 gap-3 mb-4">
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                            Guide Name *
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={travelGuideForm.guideName}
+                                                            onChange={(e) => setTravelGuideForm(prev => ({ ...prev, guideName: e.target.value }))}
+                                                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            placeholder="Enter guide name"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                            Phone
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={travelGuideForm.guidePhone}
+                                                            onChange={(e) => setTravelGuideForm(prev => ({ ...prev, guidePhone: e.target.value }))}
+                                                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                            placeholder="+91 ..."
+                                                        />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Email
+                                                    </label>
+                                                    <input
+                                                        type="email"
+                                                        value={travelGuideForm.guideEmail}
+                                                        onChange={(e) => setTravelGuideForm(prev => ({ ...prev, guideEmail: e.target.value }))}
+                                                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        placeholder="guide@example.com"
+                                                    />
+                                                </div>
+                                                
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Notes
+                                                    </label>
+                                                    <textarea
+                                                        value={travelGuideForm.notes}
+                                                        onChange={(e) => setTravelGuideForm(prev => ({ ...prev, notes: e.target.value }))}
+                                                        rows={3}
+                                                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                        placeholder="Any special instructions for the guide..."
+                                                    />
+                                                </div>
+                                                
+                                                <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="approveGuest"
+                                                        checked={travelGuideForm.approved}
+                                                        onChange={(e) => setTravelGuideForm(prev => ({ ...prev, approved: e.target.checked }))}
+                                                        className="h-5 w-5 text-green-600 rounded focus:ring-green-500"
+                                                    />
+                                                    <label htmlFor="approveGuest" className="text-sm font-medium text-green-800 cursor-pointer">
+                                                        Approve this guest (travel guide approval)
+                                                    </label>
+                                                </div>
+                                                
+                                                <div className="flex justify-end gap-3">
+                                                    <button
+                                                        onClick={handleCloseTravelGuideModal}
+                                                        disabled={guideSaving}
+                                                        className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        onClick={handleSaveTravelGuideAssignment}
+                                                        disabled={guideSaving}
+                                                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-2 disabled:opacity-50"
+                                                    >
+                                                        {guideSaving ? (
+                                                            <>
+                                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                                                Saving...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Check size={16} />
+                                                                Save Assignment
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Bulk Travel Guide Assignment Modal */}
+                                    {showBulkTravelGuideModal && (
+                                        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+                                            <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h2 className="text-xl font-bold text-purple-600 flex items-center gap-2">
+                                                        <Users size={20} />
+                                                        Bulk Assign Travel Guide
+                                                    </h2>
+                                                    <button
+                                                        className="text-gray-700 hover:text-red-600"
+                                                        onClick={handleCloseBulkTravelGuideModal}
+                                                    >
+                                                        <X size={24} />
+                                                    </button>
+                                                </div>
+
+                                                <div className="mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                                                    <p className="text-sm text-purple-800 font-medium">
+                                                        Assigning to <span className="font-bold">{selectedRows.size}</span> selected guest(s)
+                                                    </p>
+                                                    <p className="text-xs text-purple-600 mt-1">
+                                                        The same guide will be assigned to all selected rows.
+                                                    </p>
+                                                </div>
+
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Select Existing Guide
+                                                    </label>
+                                                    {guidesLoading ? (
+                                                        <div className="text-sm text-gray-500">Loading guides...</div>
+                                                    ) : (
+                                                        <select
+                                                            value={bulkTravelGuideForm.guideId}
+                                                            onChange={(e) => handleBulkTravelGuideSelect(e.target.value)}
+                                                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                                        >
+                                                            <option value="">-- Select a guide --</option>
+                                                            {travelGuides.map(guide => (
+                                                                <option key={guide.id} value={guide.id}>
+                                                                    {guide.name}
+                                                                    {guide.profile_image ? ' 📷' : ''}
+                                                                    {guide.phone ? ` (${guide.phone})` : ''}
+                                                                </option>
+                                                            ))}
+                                                        </select>
+                                                    )}
+                                                </div>
+
+                                                <div className="text-center text-xs text-gray-400 mb-4">— OR enter manually —</div>
+
+                                                <div className="grid grid-cols-2 gap-3 mb-4">
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                            Guide Name *
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={bulkTravelGuideForm.guideName}
+                                                            onChange={(e) => setBulkTravelGuideForm(prev => ({ ...prev, guideName: e.target.value }))}
+                                                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                                            placeholder="Enter guide name"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                            Phone
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={bulkTravelGuideForm.guidePhone}
+                                                            onChange={(e) => setBulkTravelGuideForm(prev => ({ ...prev, guidePhone: e.target.value }))}
+                                                            className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                                            placeholder="+91 ..."
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Email
+                                                    </label>
+                                                    <input
+                                                        type="email"
+                                                        value={bulkTravelGuideForm.guideEmail}
+                                                        onChange={(e) => setBulkTravelGuideForm(prev => ({ ...prev, guideEmail: e.target.value }))}
+                                                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                                        placeholder="guide@example.com"
+                                                    />
+                                                </div>
+
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                        Notes
+                                                    </label>
+                                                    <textarea
+                                                        value={bulkTravelGuideForm.notes}
+                                                        onChange={(e) => setBulkTravelGuideForm(prev => ({ ...prev, notes: e.target.value }))}
+                                                        rows={3}
+                                                        className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                                                        placeholder="Any special instructions for the guide..."
+                                                    />
+                                                </div>
+
+                                                <div className="mb-6 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-3">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="approveAllGuests"
+                                                        checked={bulkTravelGuideForm.approveAll}
+                                                        onChange={(e) => setBulkTravelGuideForm(prev => ({ ...prev, approveAll: e.target.checked }))}
+                                                        className="h-5 w-5 text-green-600 rounded focus:ring-green-500"
+                                                    />
+                                                    <label htmlFor="approveAllGuests" className="text-sm font-medium text-green-800 cursor-pointer">
+                                                        Approve all {selectedRows.size} selected guest(s)
+                                                    </label>
+                                                </div>
+
+                                                <div className="flex justify-end gap-3">
+                                                    <button
+                                                        onClick={handleCloseBulkTravelGuideModal}
+                                                        disabled={bulkGuideSaving}
+                                                        className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        onClick={handleSaveBulkTravelGuideAssignment}
+                                                        disabled={bulkGuideSaving}
+                                                        className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-2 disabled:opacity-50"
+                                                    >
+                                                        {bulkGuideSaving ? (
+                                                            <>
+                                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                                                Saving...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Check size={16} />
+                                                                Assign to {selectedRows.size} Guest(s)
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Manage Travel Guides Modal */}
+                                    {showManageGuidesModal && (
+                                        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+                                            <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[92vh] flex flex-col">
+                                                {/* Header */}
+                                                <div className="p-4 border-b flex justify-between items-center bg-gradient-to-r from-indigo-50 to-white">
+                                                    <h2 className="text-xl font-bold text-indigo-600 flex items-center gap-2">
+                                                        <Users size={22} />
+                                                        Manage Travel Guides
+                                                    </h2>
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowManageGuidesModal(false);
+                                                            setEditingGuide(null);
+                                                            setResetPwGuide(null);
+                                                            setNewGuideImageFile(null);
+                                                            setNewGuideImagePreview(null);
+                                                        }}
+                                                        className="text-gray-700 hover:text-red-600"
+                                                    >
+                                                        <X size={24} />
+                                                    </button>
+                                                </div>
+
+                                                {/* Create form */}
+                                                <div className="p-4 border-b bg-gray-50">
+                                                    <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                                                        <Plus size={14} />
+                                                        Create New Guide (with login credentials)
+                                                    </h3>
+                                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                                        <input
+                                                            placeholder="Full Name *"
+                                                            value={newGuide.name}
+                                                            onChange={(e) => setNewGuide({ ...newGuide, name: e.target.value })}
+                                                            className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        />
+                                                        <input
+                                                            placeholder="Username *"
+                                                            value={newGuide.username}
+                                                            onChange={(e) => setNewGuide({ ...newGuide, username: e.target.value })}
+                                                            className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        />
+                                                        <input
+                                                            type="password"
+                                                            placeholder="Password * (min 6)"
+                                                            value={newGuide.password}
+                                                            onChange={(e) => setNewGuide({ ...newGuide, password: e.target.value })}
+                                                            className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        />
+                                                        <input
+                                                            placeholder="Phone"
+                                                            value={newGuide.phone}
+                                                            onChange={(e) => setNewGuide({ ...newGuide, phone: e.target.value })}
+                                                            className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        />
+                                                        <input
+                                                            placeholder="Email"
+                                                            value={newGuide.email}
+                                                            onChange={(e) => setNewGuide({ ...newGuide, email: e.target.value })}
+                                                            className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        />
+                                                        <input
+                                                            placeholder="City"
+                                                            value={newGuide.city}
+                                                            onChange={(e) => setNewGuide({ ...newGuide, city: e.target.value })}
+                                                            className="border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                                        />
+                                                    </div>
+
+                                                    {/* Image picker for new guide */}
+                                                    <div className="flex items-center gap-3 mt-3">
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            id="new-guide-image"
+                                                            className="hidden"
+                                                            onChange={handlePickNewGuideImage}
+                                                        />
+                                                        <label
+                                                            htmlFor="new-guide-image"
+                                                            className="cursor-pointer flex items-center gap-2 px-3 py-2 border border-dashed border-indigo-400 text-indigo-600 rounded hover:bg-indigo-50 text-sm"
+                                                        >
+                                                            <Upload size={14} />
+                                                            {newGuideImageFile ? 'Change Image' : 'Choose Profile Image'}
+                                                        </label>
+                                                        {newGuideImagePreview && (
+                                                            <div className="relative">
+                                                                <img
+                                                                    src={newGuideImagePreview}
+                                                                    alt="Preview"
+                                                                    className="w-12 h-12 rounded-full object-cover border-2 border-indigo-300"
+                                                                />
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setNewGuideImageFile(null);
+                                                                        setNewGuideImagePreview(null);
+                                                                    }}
+                                                                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5"
+                                                                    title="Remove"
+                                                                    type="button"
+                                                                >
+                                                                    <X size={10} />
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                    <button
+                                                        onClick={handleCreateGuide}
+                                                        disabled={creatingGuide}
+                                                        className="mt-3 px-4 py-2 bg-indigo-600 text-white rounded text-sm hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-2"
+                                                    >
+                                                        {creatingGuide ? (
+                                                            <>
+                                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                                                Creating...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Plus size={16} />
+                                                                Create Guide
+                                                            </>
+                                                        )}
+                                                    </button>
+                                                </div>
+
+                                                {/* Guide list */}
+                                                <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                                                    {guidesLoading ? (
+                                                        <div className="text-center py-8 text-gray-500">Loading guides...</div>
+                                                    ) : travelGuides.length === 0 ? (
+                                                        <div className="text-center py-8 text-gray-500">
+                                                            <Users size={40} className="mx-auto text-gray-300 mb-2" />
+                                                            <p>No travel guides yet. Create one above.</p>
+                                                        </div>
+                                                    ) : (
+                                                        travelGuides.map((guide) => (
+                                                            <div
+                                                                key={guide.id}
+                                                                className="flex flex-wrap justify-between items-center gap-3 border rounded-lg p-3 hover:bg-gray-50"
+                                                            >
+                                                                <div className="flex-1 min-w-[220px]">
+                                                                    <div className="flex items-center gap-2">
+                                                                        {/* Avatar */}
+                                                                        {guide.profile_image ? (
+                                                                            <img
+                                                                                src={getImageUrl(guide.profile_image)}
+                                                                                alt={guide.name}
+                                                                                className="w-10 h-10 rounded-full object-cover border-2 border-indigo-200"
+                                                                            />
+                                                                        ) : (
+                                                                            <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                                                                                <Users size={16} className="text-indigo-600" />
+                                                                            </div>
+                                                                        )}
+                                                                        <div>
+                                                                            <div className="font-semibold text-gray-800">{guide.name}</div>
+                                                                            <div className="text-xs text-gray-500">
+                                                                                @{guide.username || '—'} • {guide.phone || 'no phone'} • {guide.email || 'no email'}
+                                                                            </div>
+                                                                        </div>
+                                                                        <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                                                                            guide.status === 'active'
+                                                                                ? 'bg-green-100 text-green-700'
+                                                                                : 'bg-gray-200 text-gray-600'
+                                                                        }`}>
+                                                                            {guide.status || 'active'}
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="flex flex-wrap gap-2">
+                                                                    {/* Upload / change photo */}
+                                                                    <label className="px-3 py-1 text-xs border border-indigo-500 text-indigo-600 rounded hover:bg-indigo-50 cursor-pointer flex items-center gap-1">
+                                                                        <Upload size={12} />
+                                                                        {uploadingImageFor === guide.id ? 'Uploading...' : 'Photo'}
+                                                                        <input
+                                                                            type="file"
+                                                                            accept="image/*"
+                                                                            className="hidden"
+                                                                            disabled={uploadingImageFor === guide.id}
+                                                                            onChange={(e) => {
+                                                                                const file = e.target.files[0];
+                                                                                if (file) uploadGuideImage(guide.id, file);
+                                                                                e.target.value = '';
+                                                                            }}
+                                                                        />
+                                                                    </label>
+                                                                    {/* Remove photo */}
+                                                                    {guide.profile_image && (
+                                                                        <button
+                                                                            onClick={() => removeGuideImage(guide)}
+                                                                            className="px-3 py-1 text-xs border border-gray-400 text-gray-600 rounded hover:bg-gray-50"
+                                                                        >
+                                                                            Remove Photo
+                                                                        </button>
+                                                                    )}
+                                                                    <button
+                                                                        onClick={() => handleStartEditGuide(guide)}
+                                                                        className="px-3 py-1 text-xs border border-blue-500 text-blue-600 rounded hover:bg-blue-50"
+                                                                    >
+                                                                        Edit
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => {
+                                                                            setResetPwGuide(guide);
+                                                                            setNewPassword("");
+                                                                        }}
+                                                                        className="px-3 py-1 text-xs border border-yellow-500 text-yellow-700 rounded hover:bg-yellow-50"
+                                                                    >
+                                                                        Reset Password
+                                                                    </button>
+                                                                    <button
+                                                                        onClick={() => handleDeleteGuide(guide)}
+                                                                        className="px-3 py-1 text-xs border border-red-500 text-red-600 rounded hover:bg-red-50 flex items-center gap-1"
+                                                                    >
+                                                                        <Trash2 size={12} />
+                                                                        Delete
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    )}
+                                                </div>
+
+                                                {/* Footer */}
+                                                <div className="p-4 border-t bg-gray-50 flex justify-between items-center">
+                                                    <p className="text-xs text-gray-500">
+                                                        Total guides: <span className="font-semibold">{travelGuides.length}</span>
+                                                    </p>
+                                                    <button
+                                                        onClick={() => {
+                                                            setShowManageGuidesModal(false);
+                                                            setEditingGuide(null);
+                                                            setResetPwGuide(null);
+                                                            setNewGuideImageFile(null);
+                                                            setNewGuideImagePreview(null);
+                                                        }}
+                                                        className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-sm"
+                                                    >
+                                                        Done
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* Nested Edit Guide Modal */}
+                                            {editingGuide && (
+                                                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[60] p-4">
+                                                    <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+                                                        <div className="flex justify-between items-center mb-4">
+                                                            <h3 className="text-lg font-bold text-blue-600">
+                                                                Edit Guide: {editingGuide.name}
+                                                            </h3>
+                                                            <button
+                                                                onClick={() => setEditingGuide(null)}
+                                                                className="text-gray-500 hover:text-red-600"
+                                                            >
+                                                                <X size={20} />
+                                                            </button>
+                                                        </div>
+                                                        <div className="space-y-3">
+                                                            <input
+                                                                placeholder="Name"
+                                                                value={editGuideForm.name}
+                                                                onChange={(e) => setEditGuideForm({ ...editGuideForm, name: e.target.value })}
+                                                                className="w-full border rounded px-3 py-2 text-sm"
+                                                            />
+                                                            <input
+                                                                placeholder="Username"
+                                                                value={editGuideForm.username}
+                                                                onChange={(e) => setEditGuideForm({ ...editGuideForm, username: e.target.value })}
+                                                                className="w-full border rounded px-3 py-2 text-sm"
+                                                            />
+                                                            <input
+                                                                placeholder="Phone"
+                                                                value={editGuideForm.phone}
+                                                                onChange={(e) => setEditGuideForm({ ...editGuideForm, phone: e.target.value })}
+                                                                className="w-full border rounded px-3 py-2 text-sm"
+                                                            />
+                                                            <input
+                                                                placeholder="Email"
+                                                                value={editGuideForm.email}
+                                                                onChange={(e) => setEditGuideForm({ ...editGuideForm, email: e.target.value })}
+                                                                className="w-full border rounded px-3 py-2 text-sm"
+                                                            />
+                                                            <input
+                                                                placeholder="City"
+                                                                value={editGuideForm.city}
+                                                                onChange={(e) => setEditGuideForm({ ...editGuideForm, city: e.target.value })}
+                                                                className="w-full border rounded px-3 py-2 text-sm"
+                                                            />
+                                                            <select
+                                                                value={editGuideForm.status}
+                                                                onChange={(e) => setEditGuideForm({ ...editGuideForm, status: e.target.value })}
+                                                                className="w-full border rounded px-3 py-2 text-sm"
+                                                            >
+                                                                <option value="active">Active</option>
+                                                                <option value="inactive">Inactive</option>
+                                                            </select>
+                                                        </div>
+                                                        <div className="flex justify-end gap-2 mt-5">
+                                                            <button
+                                                                onClick={() => setEditingGuide(null)}
+                                                                className="px-4 py-2 border rounded text-sm"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                            <button
+                                                                onClick={handleSaveEditGuide}
+                                                                className="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+                                                            >
+                                                                Save
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Nested Reset Password Modal */}
+                                            {resetPwGuide && (
+                                                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[60] p-4">
+                                                    <div className="bg-white rounded-lg shadow-xl max-w-sm w-full p-6">
+                                                        <div className="flex justify-between items-center mb-4">
+                                                            <h3 className="text-lg font-bold text-yellow-600">
+                                                                Reset Password
+                                                            </h3>
+                                                            <button
+                                                                onClick={() => setResetPwGuide(null)}
+                                                                className="text-gray-500 hover:text-red-600"
+                                                            >
+                                                                <X size={20} />
+                                                            </button>
+                                                        </div>
+                                                        <p className="text-sm text-gray-600 mb-3">
+                                                            Setting new password for <strong>{resetPwGuide.name}</strong> (@{resetPwGuide.username})
+                                                        </p>
+                                                        <input
+                                                            type="password"
+                                                            placeholder="New password (min 6 chars)"
+                                                            value={newPassword}
+                                                            onChange={(e) => setNewPassword(e.target.value)}
+                                                            className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                                            autoFocus
+                                                        />
+                                                        <div className="flex justify-end gap-2 mt-5">
+                                                            <button
+                                                                onClick={() => setResetPwGuide(null)}
+                                                                className="px-4 py-2 border rounded text-sm"
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                            <button
+                                                                onClick={handleResetGuidePassword}
+                                                                className="px-4 py-2 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600"
+                                                            >
+                                                                Reset
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+
                                     {showImportModal && (
                                         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
                                             <div className="relative bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -3267,7 +4438,6 @@ const FormSubmissionsPage = () => {
                                         </div>
                                     )}
 
-                                    {/* Column Management Modal */}
                                     {isManagingColumns && (
                                         <div className="fixed inset-0 z-50 bg-black bg-opacity-70 flex items-center justify-center">
                                             <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -3332,7 +4502,6 @@ const FormSubmissionsPage = () => {
                                         </div>
                                     )}
 
-                                    {/* Image Popup Modal */}
                                     {popupImage && (
                                         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
                                             <div className="relative bg-white p-4 rounded-lg shadow-lg max-w-[90%] max-h-[90%]">
