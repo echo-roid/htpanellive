@@ -724,7 +724,7 @@ const PNRListing = ({
   fetchPassengers,
   fetchJourneys
 }) => {
-  const API_BASE_URL = 'http://localhost:5000/api';
+  const API_BASE_URL = 'https://hrbklive.vercel.app/api';
   
   // State management
   const [pnrList, setPnrList] = useState([]);

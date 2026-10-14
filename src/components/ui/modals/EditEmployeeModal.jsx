@@ -46,7 +46,7 @@ export default function EditEmployeeModal({ onClose, employee }) {
   ];
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/employees/allmanagers/")
+    fetch("https://hrbklive.vercel.app/api/employees/allmanagers/")
       .then((res) => res.json())
       .then((data) => setManagers(data || []))
       .catch((err) => console.error("Error fetching managers:", err.message));
@@ -79,7 +79,7 @@ export default function EditEmployeeModal({ onClose, employee }) {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/employees/employees/${formData.id}`,
+        `https://hrbklive.vercel.app/api/employees/employees/${formData.id}`,
         {
           method: "PUT", // 👈 update API
           body: submitData,

@@ -523,7 +523,7 @@ const FormSubmissionsPage = () => {
 
     const fetchSubmissions = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/forms/${id}/submissions`);
+            const res = await axios.get(`https://hrbklive.vercel.app/api/forms/${id}/submissions`);
             console.log('API Response:', res.data);
             
             if (res.data.success && res.data.submissions.length > 0) {
@@ -1078,7 +1078,7 @@ const FormSubmissionsPage = () => {
 
         setDeletingId(submissionId);
         try {
-           const response = await axios.delete(`http://localhost:5000/api/forms/${submissionId}/submissionsRowDelete`);
+           const response = await axios.delete(`https://hrbklive.vercel.app/api/forms/${submissionId}/submissionsRowDelete`);
             
             if (response.data.success) {
                 setSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
@@ -1116,7 +1116,7 @@ const FormSubmissionsPage = () => {
                 };
             }
 
-            const response = await axios.put(`http://localhost:5000/api/submissions/${submissionId}/edit`, payload);
+            const response = await axios.put(`https://hrbklive.vercel.app/api/submissions/${submissionId}/edit`, payload);
 
             if (response.data.success) {
                 setSubmissions(prev => prev.map(sub => {

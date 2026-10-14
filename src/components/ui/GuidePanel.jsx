@@ -7,7 +7,7 @@ import {
     Download, X, Eye
 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://hrbklive.vercel.app';
 const TOKEN_KEY = 'travel_guide_token';
 const GUIDE_KEY = 'travel_guide_info';
 

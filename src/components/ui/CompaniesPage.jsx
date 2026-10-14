@@ -35,7 +35,7 @@ ChartJS.register(
   RadialLinearScale
 );
 
-const COMPANY_API_URL = "http://localhost:5000/api/contacts";
+const COMPANY_API_URL = "https://hrbklive.vercel.app/api/contacts";
 
 // Masking utility functions
 const maskEmail = (email) => {

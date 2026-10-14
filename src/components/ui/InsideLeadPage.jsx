@@ -81,13 +81,13 @@ const InsideLeadPage = () => {
 
   const handlePreviewDocument = (doc) => {
     setSelectedFile(doc);
-    const fileUrl = doc.startsWith("http") ? doc : `http://localhost:5000${doc}`;
+    const fileUrl = doc.startsWith("http") ? doc : `https://hrbklive.vercel.app${doc}`;
     setPreviewUrl(fileUrl);
     setShowPreview(true);
   };
 
   const handleDownloadDocument = (doc) => {
-    const fileUrl = doc.startsWith("http") ? doc : `http://localhost:5000${doc}`;
+    const fileUrl = doc.startsWith("http") ? doc : `https://hrbklive.vercel.app${doc}`;
 
     const link = document.createElement("a");
     link.href = fileUrl;

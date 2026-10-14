@@ -16,14 +16,14 @@ const ReimbursementList = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch(`http://localhost:5000/api/reimbursements/rei/${Myid}`);
+        const res = await fetch(`https://hrbklive.vercel.app/api/reimbursements/rei/${Myid}`);
         const data = await res.json();
 
         if (res.ok) {
           setReimbursements(data);
           setAllReimbursements(data);
 
-          const allRes = await fetch(`http://localhost:5000/api/reimbursements`);
+          const allRes = await fetch(`https://hrbklive.vercel.app/api/reimbursements`);
           const allData = await allRes.json();
           const pending = allData.filter(r => r.manager_id === Myid && r.status?.toLowerCase() === 'pending');
           setPendingApprovalCount(pending.length);
@@ -54,7 +54,7 @@ const ReimbursementList = () => {
 
   const updateReimbursementStatus = async (id, status) => {
     try {
-      await fetch(`http://localhost:5000/api/reimbursements/rei/${id}/status`, {
+      await fetch(`https://hrbklive.vercel.app/api/reimbursements/rei/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),

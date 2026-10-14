@@ -16,7 +16,7 @@ export default function LeaveNotification() {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:5000/api/leave/notifications/${user.employee.id}`
+          `https://hrbklive.vercel.app/api/leave/notifications/${user.employee.id}`
         );
         if (!response.ok) {
           throw new Error('Failed to fetch leave notifications');
@@ -38,7 +38,7 @@ export default function LeaveNotification() {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/leave/approve/${requestId}/`, {
+      const response = await fetch(`https://hrbklive.vercel.app/api/leave/approve/${requestId}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export default function LeaveNotification() {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/leave/rejectleave/${leaveId}`, {
+      const response = await fetch(`https://hrbklive.vercel.app/api/leave/rejectleave/${leaveId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

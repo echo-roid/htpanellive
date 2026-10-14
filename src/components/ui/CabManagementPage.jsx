@@ -28,7 +28,7 @@ import {
 import axios from 'axios';
 import bookImage from '../../assets/book.png';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://hrbklive.vercel.app/api';
 
 const CabManagementPage = () => {
   const { id } = useParams();

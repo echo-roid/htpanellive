@@ -149,11 +149,11 @@ const Gestlist = ({ leaD }) => {
     const fetchGuestList = async () => {
       try {
         const { data: res } = await axios.get(
-          `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist`
+          `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/guestlist`
         );
 
         const { data: dyn } = await axios.get(
-          `http://localhost:5000/api/dynamic-values/${leadId}`
+          `https://hrbklive.vercel.app/api/dynamic-values/${leadId}`
         );
 
         if (res && res.guestData && Array.isArray(res.guestData)) {
@@ -681,7 +681,7 @@ const Gestlist = ({ leaD }) => {
   const updateGuestRow = async (rowIndex, updatedRowData) => {
     try {
       const response = await axios.put(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/update-row`,
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/update-row`,
         {
           rowIndex: rowIndex,
           updatedData: updatedRowData
@@ -770,7 +770,7 @@ const Gestlist = ({ leaD }) => {
         const { select, [serialNumberField]: srNo, ...cleanNewRow } = newRow;
 
         const response = await axios.post(
-          `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist?action=append`,
+          `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/guestlist?action=append`,
           { guestData: [cleanNewRow] }
         );
 
@@ -820,7 +820,7 @@ const Gestlist = ({ leaD }) => {
     try {
       // Call API to rename header
       await axios.put(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/rename-header`,
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/rename-header`,
         {
           oldColumnName: oldColumn,
           newColumnName: newHeader
@@ -890,7 +890,7 @@ const Gestlist = ({ leaD }) => {
       }
 
       const response = await axios.delete(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/remove-row`,
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/remove-row`,
         { data: payload }
       );
 
@@ -965,7 +965,7 @@ const Gestlist = ({ leaD }) => {
       const indices = Array.from(bulkRemoveModal.selectedIndices);
 
       const response = await axios.delete(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/bulk-remove`,
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/bulk-remove`,
         { data: { rowIndices: indices } }
       );
 
@@ -1055,7 +1055,7 @@ const Gestlist = ({ leaD }) => {
 
     try {
       const response = await axios.delete(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/clear`,
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/clear`,
         { data: { confirm: true } }
       );
 
@@ -1088,7 +1088,7 @@ const Gestlist = ({ leaD }) => {
       const dataToSubmit = data.map(({ select, [serialNumberField]: srNo, ...rest }) => rest);
 
       const response = await axios.post(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist?action=${chooseSubmit}`,
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/guestlist?action=${chooseSubmit}`,
         { guestData: dataToSubmit }
       );
       showNotification("success", "Guest list submitted", response.data.message);
@@ -1102,7 +1102,7 @@ const Gestlist = ({ leaD }) => {
     setShowSettingsModal(true);
     try {
       const { data: res } = await axios.get(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/guest-list/headers`
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/guest-list/headers`
       );
       if (res.success) {
         setHeaderOptions(res.headers);
@@ -2396,7 +2396,7 @@ const Gestlist = ({ leaD }) => {
                   };
                   try {
                     const response = await axios.post(
-                      `http://localhost:5000/api/dynamic-values/${leadId}`,
+                      `https://hrbklive.vercel.app/api/dynamic-values/${leadId}`,
                       payload
                     );
                     showNotification("success", "Settings saved successfully", `${Object.keys(paxMap).length} pax groups processed`);

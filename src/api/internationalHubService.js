@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api/international-hubs';
+const API_BASE_URL = 'https://hrbklive.vercel.app/api/international-hubs';
 
 // Get international hub data by form ID
 export const getInternationalHubByFormId = async (formId) => {

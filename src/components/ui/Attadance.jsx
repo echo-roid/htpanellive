@@ -27,7 +27,7 @@ import Workinghours from "./modals/Workinghours";
     const getAttendanceReport = async (employeeId, startDate, endDate) => {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/attendance/report?employee_id=${employeeId}&start_date=${startDate}&end_date=${endDate}`
+            `https://hrbklive.vercel.app/api/attendance/report?employee_id=${employeeId}&start_date=${startDate}&end_date=${endDate}`
           );
       
           const data = await response.json();
@@ -61,7 +61,7 @@ import Workinghours from "./modals/Workinghours";
   
       const checkWorkStatus = async () => {
         try {
-          const response = await fetch(`http://localhost:5000/api/attendance/hours-worked?employee_id=${user?.employee?.id}`);
+          const response = await fetch(`https://hrbklive.vercel.app/api/attendance/hours-worked?employee_id=${user?.employee?.id}`);
           const data = await response.json();
       
           if (response.ok) {
@@ -98,7 +98,7 @@ import Workinghours from "./modals/Workinghours";
     
     const recordStartTime = async () => {
         try {
-        const response = await fetch('http://localhost:5000/api/attendance/start', {
+        const response = await fetch('https://hrbklive.vercel.app/api/attendance/start', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -115,7 +115,7 @@ import Workinghours from "./modals/Workinghours";
     
     const recordEndTime = async () => {
         try {
-        const response = await fetch('http://localhost:5000/api/attendance/end', {
+        const response = await fetch('https://hrbklive.vercel.app/api/attendance/end', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',

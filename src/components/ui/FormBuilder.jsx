@@ -549,7 +549,7 @@ const EmailModal = ({ isOpen, onClose, formData, onSaveAndSend }) => {
       
       const htmlContent = useHtml ? htmlMessage : message.replace(/\n/g, '<br>');
       
-      const response = await fetch('http://localhost:5000/api/email/send-email', {
+      const response = await fetch('https://hrbklive.vercel.app/api/email/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -594,7 +594,7 @@ const EmailModal = ({ isOpen, onClose, formData, onSaveAndSend }) => {
     try {
       const htmlContent = useHtml ? htmlMessage : message.replace(/\n/g, '<br>');
       
-      const response = await fetch('http://localhost:5000/api/email/send-email', {
+      const response = await fetch('https://hrbklive.vercel.app/api/email/send-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -5184,7 +5184,7 @@ const FormBuilder = () => {
         value === null || value === undefined ? '' : value
       ));
 
-      const response = await fetch('http://localhost:5000/api/forms', {
+      const response = await fetch('https://hrbklive.vercel.app/api/forms', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -5200,7 +5200,7 @@ const FormBuilder = () => {
 
       const data = await response.json();
       
-      const formUrlGenerated = data.formUrl || `http://localhost:5000/operations/SharedFormView/${data.shareId}`;
+      const formUrlGenerated = data.formUrl || `https://hrbklive.vercel.app/operations/SharedFormView/${data.shareId}`;
       setFormUrl(formUrlGenerated);
       
       setFormDataForEmail({

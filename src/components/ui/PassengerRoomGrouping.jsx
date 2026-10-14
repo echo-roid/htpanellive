@@ -20,7 +20,7 @@ const HotelGroupingView = ({ leadId = 13 }) => {
       setLoading(true);
       setError(null);
       
-      const response = await axios.get(`http://localhost:5000/api/hotels/lead/${leadId}/hotel-groups`);
+      const response = await axios.get(`https://hrbklive.vercel.app/api/hotels/lead/${leadId}/hotel-groups`);
       
       if (response.data.success) {
         setHotelGroups(response.data.data);

@@ -42,7 +42,7 @@ const sendEmployeeEmail = async (employeeData, emailType, customData = {}) => {
         message = customData.message || '';
     }
 
-    const response = await fetch(`http://localhost:5000/api/email/send-email`, {
+    const response = await fetch(`https://hrbklive.vercel.app/api/email/send-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -308,9 +308,9 @@ const SalarySlipGenerator = ({ employeeId, employeeData, leaveSettings }) => {
       setLoading(true);
       setError(null);
       try {
-        const attendanceRes = await axios.get(`http://localhost:5000/api/attendance/employee/${employeeId}`);
+        const attendanceRes = await axios.get(`https://hrbklive.vercel.app/api/attendance/employee/${employeeId}`);
         setAttendanceData(attendanceRes.data);
-        const leaveRes = await axios.get(`http://localhost:5000/api/leave/employee/${employeeId}`);
+        const leaveRes = await axios.get(`https://hrbklive.vercel.app/api/leave/employee/${employeeId}`);
         setLeaveBalanceData(leaveRes.data);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -1029,7 +1029,7 @@ const EmployeeDetail = () => {
   useEffect(() => {
     async function fetchLeaveSettings() {
       try {
-        const res = await fetch('http://localhost:5000/api/leave-settings/leave-settings');
+        const res = await fetch('https://hrbklive.vercel.app/api/leave-settings/leave-settings');
         const data = await res.json();
         setLeaveSettings(data);
         console.log("✅ Leave settings loaded:", data);
@@ -1044,7 +1044,7 @@ const EmployeeDetail = () => {
   useEffect(() => {
     async function fetchEmployeeData() {
       try {
-        const res = await fetch(`http://localhost:5000/api/employees/${id}`);
+        const res = await fetch(`https://hrbklive.vercel.app/api/employees/${id}`);
         const result = await res.json();
         if (result) setEmployee(result);
       } catch (err) {
@@ -1060,7 +1060,7 @@ const EmployeeDetail = () => {
       if (id && activeTab === "leave") {
         setLeaveLoading(true);
         try {
-          const res = await fetch(`http://localhost:5000/api/leave/employee/${id}`);
+          const res = await fetch(`https://hrbklive.vercel.app/api/leave/employee/${id}`);
           const result = await res.json();
           if (result) setLeaveData(result);
         } catch (err) {
@@ -1078,7 +1078,7 @@ const EmployeeDetail = () => {
     async function fetchAttendanceLeaves() {
       if (id && (activeTab === "leave" || activeTab === "salary")) {
         try {
-          const response = await axios.get(`http://localhost:5000/api/attendance/employee/${id}`);
+          const response = await axios.get(`https://hrbklive.vercel.app/api/attendance/employee/${id}`);
           if (response.data && response.data.history) {
             setAttendanceRecords(response.data.history);
             const leavesCount = {};
@@ -1102,7 +1102,7 @@ const EmployeeDetail = () => {
   useEffect(() => {
     async function fetchEmployeesList() {
       try {
-        const res = await fetch('http://localhost:5000/api/forms/list');
+        const res = await fetch('https://hrbklive.vercel.app/api/forms/list');
         const data = await res.json();
         if (res.ok) setEmployeesList(data.employees || []);
       } catch (error) {
@@ -1119,7 +1119,7 @@ const EmployeeDetail = () => {
     if (activeTab === "documents") {
       async function fetchDocuments() {
         try {
-          const res = await fetch(`http://localhost:5000/api/forms/employeeSpecific/${id}`);
+          const res = await fetch(`https://hrbklive.vercel.app/api/forms/employeeSpecific/${id}`);
           const result = await res.json();
           if (result?.employee) setDocuments(result.employee);
         } catch (err) {

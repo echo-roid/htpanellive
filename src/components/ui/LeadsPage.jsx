@@ -34,10 +34,10 @@ ChartJS.register(
   Filler
 );
 
-const API_URL = "http://localhost:5000/api/leads";
-const EMPLOYEE_API_URL = "http://localhost:5000/api/employees";
-const COMPANY_API_URL = "http://localhost:5000/api/contacts";
-const CLIENT_API_URL = "http://localhost:5000/api/companies";
+const API_URL = "https://hrbklive.vercel.app/api/leads";
+const EMPLOYEE_API_URL = "https://hrbklive.vercel.app/api/employees";
+const COMPANY_API_URL = "https://hrbklive.vercel.app/api/contacts";
+const CLIENT_API_URL = "https://hrbklive.vercel.app/api/companies";
 
 // Utility function to capitalize first letter of each word
 const capitalizeName = (name) => {
@@ -468,7 +468,7 @@ const LeadFormDrawer = ({
   const fetchDivisions = async (parentClientCode) => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/divisions/${parentClientCode}`
+        `https://hrbklive.vercel.app/api/divisions/${parentClientCode}`
       );
 
       if (res.data.success) {

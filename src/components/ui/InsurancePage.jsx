@@ -257,7 +257,7 @@ export default function InsurancePageWithTabs() {
     const fetchForms = async () => {
         try {
             setFormsLoading(true);
-            const response = await fetch(`http://localhost:5000/api/forms/lead/${id}`);
+            const response = await fetch(`https://hrbklive.vercel.app/api/forms/lead/${id}`);
             const data = await response.json();
 
             if (!response.ok) {
@@ -277,7 +277,7 @@ export default function InsurancePageWithTabs() {
         try {
             setLoading(true);
             const submissionPromises = selectedForms.map(formId => 
-                fetch(`http://localhost:5000/api/forms/${formId}/submissions`).then(res => res.json())
+                fetch(`https://hrbklive.vercel.app/api/forms/${formId}/submissions`).then(res => res.json())
             );
 
             const submissionsData = await Promise.all(submissionPromises);

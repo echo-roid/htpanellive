@@ -795,7 +795,7 @@ export default function EmployeesAttendance() {
   useEffect(() => {
     async function fetchLeaveSettings() {
       try {
-        const res = await axios.get('http://localhost:5000/api/leave-settings/leave-settings');
+        const res = await axios.get('https://hrbklive.vercel.app/api/leave-settings/leave-settings');
         setLeaveSettings(res.data);
         console.log("✅ Leave settings loaded:", res.data);
       } catch (err) {
@@ -815,7 +815,7 @@ export default function EmployeesAttendance() {
       const year = now.getFullYear();
       
       try {
-        const response = await fetch(`http://localhost:5000/api/calendar?month=${month}&year=${year}&userEmail=${userEmail}&userId=${employeeId}`);
+        const response = await fetch(`https://hrbklive.vercel.app/api/calendar?month=${month}&year=${year}&userEmail=${userEmail}&userId=${employeeId}`);
         if (!response.ok) throw new Error("Failed to fetch calendar events");
         const data = await response.json();
         const rawEvents = Array.isArray(data.data) ? data.data : [];
@@ -855,11 +855,11 @@ export default function EmployeesAttendance() {
       });
 
       if (todayEvent) {
-        const existingAttendance = await axios.get(`http://localhost:5000/api/attendance?date=${today}`);
+        const existingAttendance = await axios.get(`https://hrbklive.vercel.app/api/attendance?date=${today}`);
         const existingRecord = existingAttendance.data.find(r => r.employee_id === employeeId);
         
         if (!existingRecord) {
-          await axios.post('http://localhost:5000/api/attendance', {
+          await axios.post('https://hrbklive.vercel.app/api/attendance', {
             employee_id: employeeId,
             date: today,
             status: 'corporate_event',
@@ -869,7 +869,7 @@ export default function EmployeesAttendance() {
           });
           console.log("✅ Corporate event attendance saved for today");
         } else if (!existingRecord.is_corporate_event) {
-          await axios.patch(`http://localhost:5000/api/attendance/${existingRecord.id}`, {
+          await axios.patch(`https://hrbklive.vercel.app/api/attendance/${existingRecord.id}`, {
             status: 'corporate_event',
             event_id: todayEvent.event_id,
             event_title: todayEvent.title,
@@ -888,7 +888,7 @@ export default function EmployeesAttendance() {
     const fetchLeaveData = async () => {
       if (!employeeId) return;
       try {
-        const leaveRes = await axios.get(`http://localhost:5000/api/leave/employee/${employeeId}`);
+        const leaveRes = await axios.get(`https://hrbklive.vercel.app/api/leave/employee/${employeeId}`);
         setLeaveBalanceData(leaveRes.data);
         console.log("✅ Leave data loaded:", leaveRes.data);
         
@@ -922,11 +922,11 @@ export default function EmployeesAttendance() {
       });
 
       if (todayLeave) {
-        const existingAttendance = await axios.get(`http://localhost:5000/api/attendance?date=${today}`);
+        const existingAttendance = await axios.get(`https://hrbklive.vercel.app/api/attendance?date=${today}`);
         const existingRecord = existingAttendance.data.find(r => r.employee_id === employeeId);
         
         if (!existingRecord) {
-          await axios.post('http://localhost:5000/api/attendance', {
+          await axios.post('https://hrbklive.vercel.app/api/attendance', {
             employee_id: employeeId,
             date: today,
             status: 'leave',
@@ -936,7 +936,7 @@ export default function EmployeesAttendance() {
           });
           console.log("✅ Leave attendance saved for today");
         } else if (!existingRecord.is_leave_day) {
-          await axios.patch(`http://localhost:5000/api/attendance/${existingRecord.id}`, {
+          await axios.patch(`https://hrbklive.vercel.app/api/attendance/${existingRecord.id}`, {
             status: 'leave',
             leave_type: todayLeave.leave_type,
             is_leave_day: 1,
@@ -956,7 +956,7 @@ export default function EmployeesAttendance() {
     setError(null);
     try {
       if (employeeId) {
-        const employeeRes = await axios.get(`http://localhost:5000/api/attendance/employee/${employeeId}`);
+        const employeeRes = await axios.get(`https://hrbklive.vercel.app/api/attendance/employee/${employeeId}`);
         
         if (employeeRes?.data) {
           const history = employeeRes.data.history || [];
@@ -1193,7 +1193,7 @@ export default function EmployeesAttendance() {
       }
       
       try {
-        const todayRes = await axios.get('http://localhost:5000/api/attendance/today-present-by-team');
+        const todayRes = await axios.get('https://hrbklive.vercel.app/api/attendance/today-present-by-team');
         if (todayRes?.data) {
           setTodayData(todayRes.data);
         }

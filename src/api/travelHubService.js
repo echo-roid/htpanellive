@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api/travel-hubs';
+const API_BASE_URL = 'https://hrbklive.vercel.app/api/travel-hubs';
 
 // Get travel hub data by form ID
 export const getTravelHubByFormId = async (formId) => {

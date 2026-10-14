@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://hrbklive.vercel.app';
 
 export const getImageUrl = (path) => {
     if (!path) return null;

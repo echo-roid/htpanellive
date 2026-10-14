@@ -59,7 +59,7 @@ const WonLeadInsidePage = () => {
     const fetchGuestList = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/guestlist/leads/${id}/guestlist`
+          `https://hrbklive.vercel.app/api/guestlist/leads/${id}/guestlist`
         );
         setGuestData(response.data.guestData || []);
         setLeadDetails(response.data);
@@ -76,7 +76,7 @@ const WonLeadInsidePage = () => {
     const fetchForms = async () => {
       try {
         setFormsLoading(true);
-        const response = await fetch(`http://localhost:5000/api/forms/lead/${id}`);
+        const response = await fetch(`https://hrbklive.vercel.app/api/forms/lead/${id}`);
         const data = await response.json();
         if (response.ok) {
           setForms(data.forms || []);
@@ -100,7 +100,7 @@ const WonLeadInsidePage = () => {
       if (selectedForms.length === 0) return;
       
       const submissionPromises = selectedForms.map(formId => 
-        fetch(`http://localhost:5000/api/forms/${formId}/submissions`)
+        fetch(`https://hrbklive.vercel.app/api/forms/${formId}/submissions`)
           .then(res => res.json())
           .then(data => ({ formId, data }))
           .catch(err => ({ formId, error: err.message }))

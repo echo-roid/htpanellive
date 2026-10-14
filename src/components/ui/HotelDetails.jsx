@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import HotelSpecificationsForm from './HotelSpecificationsForm'; // Import the form component
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://hrbklive.vercel.app/api";
 
 const CompactHotelTable = () => {
   const [hotels, setHotels] = useState([]);

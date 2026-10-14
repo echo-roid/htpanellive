@@ -6,7 +6,7 @@ import CompactRoomTable from "./RoomTable.jsx";
 import CompactVenueTable from "./VenueTable.jsx";
 import HotelDetails from "./HotelDetails.jsx";
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://hrbklive.vercel.app/api";
 
 export default function VendorProfile() {
   const location = useLocation();

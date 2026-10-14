@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const fetchProjects = createAsyncThunk('projects/fetchProjects', async () => {
-  const res = await fetch('http://localhost:5000/api/projects');
+  const res = await fetch('https://hrbklive.vercel.app/api/projects');
   if (!res.ok) throw new Error('Failed to fetch projects');
   const data = await res.json();
   return data; // Make sure backend returns { data: [...] }

@@ -5,7 +5,7 @@ import * as apiCo from "../../api/Companie";
 import bookImage from "../../assets/book.png";
 import { Link } from "react-router-dom";
 
-const CLIENT_API_URL = "http://localhost:5000/api/companies";
+const CLIENT_API_URL = "https://hrbklive.vercel.app/api/companies";
 
 // Masking utility functions
 const maskEmail = (email) => {

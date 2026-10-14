@@ -43,7 +43,7 @@ import Gestlist from "../ui/Gestlist"
 import bookImage  from "../../assets/book.png"
 
 // Builds full URL for guide images served from the backend
-const API_BASE = 'http://localhost:5000';
+const API_BASE = 'https://hrbklive.vercel.app';
 const getImageUrl = (path) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
@@ -634,7 +634,7 @@ const FormSubmissionsPage = () => {
     const fetchTravelGuides = async () => {
         setGuidesLoading(true);
         try {
-            const response = await axios.get('http://localhost:5000/api/travel-guides');
+            const response = await axios.get('https://hrbklive.vercel.app/api/travel-guides');
             if (response.data.success) {
                 setTravelGuides(response.data.guides || []);
             }
@@ -654,7 +654,7 @@ const FormSubmissionsPage = () => {
         if (!formId) return;
         try {
             const response = await axios.get(
-                `http://localhost:5000/api/forms/${formId}/travel-guides`
+                `https://hrbklive.vercel.app/api/forms/${formId}/travel-guides`
             );
             if (response.data.success) {
                 setTravelGuideAssignments(response.data.data || {});
@@ -761,7 +761,7 @@ const FormSubmissionsPage = () => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/api/forms/${submissionId}/assign-guide`,
+                `https://hrbklive.vercel.app/api/forms/${submissionId}/assign-guide`,
                 {
                     guideId: travelGuideForm.guideId,
                     guideName: travelGuideForm.guideName,
@@ -804,7 +804,7 @@ const FormSubmissionsPage = () => {
 
         try {
             await axios.delete(
-                `http://localhost:5000/api/forms/${submissionId}/assign-guide`
+                `https://hrbklive.vercel.app/api/forms/${submissionId}/assign-guide`
             );
         } catch (err) {
             console.warn('Server remove failed:', err.message);
@@ -893,7 +893,7 @@ const FormSubmissionsPage = () => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/api/forms/bulk-assign-guide`,
+                `https://hrbklive.vercel.app/api/forms/bulk-assign-guide`,
                 {
                     submissionIds: selectedIds,
                     guideId: bulkTravelGuideForm.guideId,
@@ -945,7 +945,7 @@ const FormSubmissionsPage = () => {
         setUploadingImageFor(guideId);
         try {
             const res = await axios.post(
-                `http://localhost:5000/api/travel-guides/${guideId}/image`,
+                `https://hrbklive.vercel.app/api/travel-guides/${guideId}/image`,
                 formData,
                 { headers: { 'Content-Type': 'multipart/form-data' } }
             );
@@ -966,7 +966,7 @@ const FormSubmissionsPage = () => {
         if (!window.confirm(`Remove profile image for ${guide.name}?`)) return;
         try {
             const res = await axios.delete(
-                `http://localhost:5000/api/travel-guides/${guide.id}/image`
+                `https://hrbklive.vercel.app/api/travel-guides/${guide.id}/image`
             );
             if (res.data.success) {
                 await fetchTravelGuides();
@@ -989,7 +989,7 @@ const FormSubmissionsPage = () => {
         setCreatingGuide(true);
         try {
             const response = await axios.post(
-                "http://localhost:5000/api/travel-guides",
+                "https://hrbklive.vercel.app/api/travel-guides",
                 newGuide
             );
             if (response.data.success) {
@@ -1023,7 +1023,7 @@ const FormSubmissionsPage = () => {
         if (!window.confirm(`Delete travel guide "${guide.name}"? This cannot be undone.`)) return;
         try {
             const response = await axios.delete(
-                `http://localhost:5000/api/travel-guides/${guide.id}`
+                `https://hrbklive.vercel.app/api/travel-guides/${guide.id}`
             );
             if (response.data.success) {
                 alert("Travel guide deleted");
@@ -1043,7 +1043,7 @@ const FormSubmissionsPage = () => {
         }
         try {
             const response = await axios.post(
-                `http://localhost:5000/api/travel-guides/${resetPwGuide.id}/reset-password`,
+                `https://hrbklive.vercel.app/api/travel-guides/${resetPwGuide.id}/reset-password`,
                 { newPassword }
             );
             if (response.data.success) {
@@ -1073,7 +1073,7 @@ const FormSubmissionsPage = () => {
         if (!editingGuide) return;
         try {
             const response = await axios.put(
-                `http://localhost:5000/api/travel-guides/${editingGuide.id}`,
+                `https://hrbklive.vercel.app/api/travel-guides/${editingGuide.id}`,
                 editGuideForm
             );
             if (response.data.success) {
@@ -1390,7 +1390,7 @@ const FormSubmissionsPage = () => {
         setBulkDeleting(true);
         try {
             const deletePromises = selectedIds.map(id => 
-                axios.delete(`http://localhost:5000/api/forms/${id}/submissionsRowDelete`)
+                axios.delete(`https://hrbklive.vercel.app/api/forms/${id}/submissionsRowDelete`)
             );
             
             const results = await Promise.allSettled(deletePromises);
@@ -1607,7 +1607,7 @@ const FormSubmissionsPage = () => {
         try {
             setFormsLoading(true);
             const response = await axios.get(
-                `http://localhost:5000/api/forms/lead-submissions/${id}`
+                `https://hrbklive.vercel.app/api/forms/lead-submissions/${id}`
             );
             if (response.data.success) {
                 const formsData = response.data.forms;
@@ -1642,7 +1642,7 @@ const FormSubmissionsPage = () => {
 
         try {
             setLoading(true);
-            const res = await axios.get(`http://localhost:5000/api/forms/${formToFetch}/submissions`);
+            const res = await axios.get(`https://hrbklive.vercel.app/api/forms/${formToFetch}/submissions`);
             console.log('API Response for form', formToFetch, ':', res.data);
             
             if (res.data.success && res.data.submissions.length > 0) {
@@ -2292,7 +2292,7 @@ const FormSubmissionsPage = () => {
 
         setDeletingId(submissionId);
         try {
-            const response = await axios.delete(`http://localhost:5000/api/forms/${submissionId}/submissionsRowDelete`);
+            const response = await axios.delete(`https://hrbklive.vercel.app/api/forms/${submissionId}/submissionsRowDelete`);
             
             if (response.data.success) {
                 setSubmissions(prev => prev.filter(sub => sub.id !== submissionId));
@@ -2334,7 +2334,7 @@ const FormSubmissionsPage = () => {
                 };
             }
 
-            const response = await axios.put(`http://localhost:5000/api/submissions/${submissionId}/edit`, payload);
+            const response = await axios.put(`https://hrbklive.vercel.app/api/submissions/${submissionId}/edit`, payload);
 
             if (response.data.success) {
                 setSubmissions(prev => prev.map(sub => {

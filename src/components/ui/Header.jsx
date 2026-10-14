@@ -7,7 +7,7 @@ import logo from "../../assets/Company'slogo.png";
 import { Link } from "react-router-dom";
 
 /* ✅ Single source of truth for API base + headers */
-const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://hrbklive.vercel.app/api";
 const NGROK_HEADERS = {
   "ngrok-skip-browser-warning": "true",
   "Content-Type": "application/json",

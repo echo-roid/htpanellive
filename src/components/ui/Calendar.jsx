@@ -344,7 +344,7 @@ const Calendar = () => {
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
     try {
-      const response = await fetch(`http://localhost:5000/api/calendar?month=${month}&year=${year}&userEmail=${userEmail}&userId=${id}`);
+      const response = await fetch(`https://hrbklive.vercel.app/api/calendar?month=${month}&year=${year}&userEmail=${userEmail}&userId=${id}`);
       if (!response.ok) throw new Error("Failed to fetch calendar events");
       const data = await response.json();
       const rawEvents = Array.isArray(data.data) ? data.data : [];
@@ -360,7 +360,7 @@ const Calendar = () => {
 
   const fetchLeaveHistory = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/leave/history/${id}`);
+      const response = await fetch(`https://hrbklive.vercel.app/api/leave/history/${id}`);
       if (!response.ok) throw new Error("Failed to fetch leave history");
       const data = await response.json();
       const approvedLeaves = Array.isArray(data)
@@ -409,7 +409,7 @@ const Calendar = () => {
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/tasks/tasks?userId=${id}`);
+      const res = await fetch(`https://hrbklive.vercel.app/api/tasks/tasks?userId=${id}`);
       if (!res.ok) throw new Error("Failed to fetch tasks");
       const data = await res.json();
       const tasksArray = data.tasks || (data.data && data.data.tasks) || [];

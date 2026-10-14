@@ -12,7 +12,7 @@ import axios from 'axios';
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js`;
 
 // API Configuration
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'https://hrbklive.vercel.app/api';
 
 const VendorBillingPage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);

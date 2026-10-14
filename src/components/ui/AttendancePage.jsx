@@ -54,7 +54,7 @@ const AttendanceReport = () => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [error, setError] = useState(null);
 
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://hrbklive.vercel.app';
 
   // Fetch attendance data from API
   useEffect(() => {

@@ -23,7 +23,7 @@ import {
   MoreVertical
 } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://hrbklive.vercel.app/api';
 
 // Safe array access helper
 const safeArray = (array) => Array.isArray(array) ? array : [];
@@ -718,7 +718,7 @@ export default function PassengerListPage() {
   const fetchGuestListData = async () => {
     try {
       const { data: res } = await axios.get(
-        `http://localhost:5000/api/guestlist/leads/${leadId}/guestlist`
+        `https://hrbklive.vercel.app/api/guestlist/leads/${leadId}/guestlist`
       );
 
       if (res?.guestData && Array.isArray(res.guestData)) {
@@ -745,7 +745,7 @@ export default function PassengerListPage() {
   const fetchForms = async () => {
     try {
       setFormsLoading(true);
-      const response = await fetch(`http://localhost:5000/api/forms/lead/${leadId}`);
+      const response = await fetch(`https://hrbklive.vercel.app/api/forms/lead/${leadId}`);
       const data = await response.json();
 
       if (!response.ok) {

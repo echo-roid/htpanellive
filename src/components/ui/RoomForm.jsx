@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://hrbklive.vercel.app/api";
 
 const RoomSpecificationsForm = ({ onSubmit, onCancel }) => {
   const [roomTypes, setRoomTypes] = useState([

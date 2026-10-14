@@ -519,7 +519,7 @@ const EditFormPage = () => {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/forms/shared/${shareId}`);
+        const response = await fetch(`https://hrbklive.vercel.app/api/forms/shared/${shareId}`);
         if (!response.ok) {
           throw new Error('Failed to load form');
         }
@@ -4098,7 +4098,7 @@ const SignaturePad = ({ element }) => {
 
       console.log('Saving form data:', cleanFormData); // For debugging
 
-      const response = await fetch(`http://localhost:5000/api/forms/${formId}`, {
+      const response = await fetch(`https://hrbklive.vercel.app/api/forms/${formId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -4115,7 +4115,7 @@ const SignaturePad = ({ element }) => {
       const data = await response.json();
 
       setSaveSuccess(true);
-      setFormUrl(data.formUrl || `http://localhost:5000/operations/SharedFormView/${shareId}`);
+      setFormUrl(data.formUrl || `https://hrbklive.vercel.app/operations/SharedFormView/${shareId}`);
     } catch (error) {
       setSaveError(error.message);
       console.error('Error updating form:', error);

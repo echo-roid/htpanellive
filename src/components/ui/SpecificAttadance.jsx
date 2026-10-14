@@ -8,7 +8,7 @@ const AttendanceSummary = () => {
 
   const fetchSummary = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/attendance/summary_all", {
+      const res = await axios.get("https://hrbklive.vercel.app/api/attendance/summary_all", {
         params: {
           period,
           ...(employeeId && { employeeId }),
@@ -74,7 +74,7 @@ const AttendanceSummary = () => {
                   <tr key={emp.employee_id} className="border-b hover:bg-blue-50 transition">
                     <td className="py-3 px-4">
                       <img
-                        src={`http://localhost:5000/uploads/${emp.photo}` || "/default-avatar.png"}
+                        src={`https://hrbklive.vercel.app/uploads/${emp.photo}` || "/default-avatar.png"}
                         alt="avatar"
                         className="w-10 h-10 rounded-full object-cover"
                       />

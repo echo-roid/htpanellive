@@ -595,7 +595,7 @@ const assignRoomNumber = async (
     paxCode = null
 ) => {
     try {
-        const API_BASE_URL = 'http://localhost:5000/api';
+        const API_BASE_URL = 'https://hrbklive.vercel.app/api';
         
         // Build URL using BOTH pnrId and paxCode as path params
         // If paxCode exists → use paxCode path
@@ -648,7 +648,7 @@ const assignRoomNumber = async (
     // Batch assign room numbers - By PNR ID
     const batchAssignRoomNumbers = async (pnrId, assignments, hotelType = 'destination', flightDirection = 'onward', leadId = null) => {
         try {
-            const API_BASE_URL = 'http://localhost:5000/api';
+            const API_BASE_URL = 'https://hrbklive.vercel.app/api';
             const url = `${API_BASE_URL}/hotels/pnr/${pnrId}/passengers/room-numbers`;
             
             const response = await fetch(url, {
@@ -1417,7 +1417,7 @@ const assignRoomNumber = async (
     // Assign hotel to PNR
     const assignHotelToPNR = async (pnrId, hotelData) => {
         try {
-            const API_BASE_URL = 'http://localhost:5000/api';
+            const API_BASE_URL = 'https://hrbklive.vercel.app/api';
             const url = `${API_BASE_URL}/vendors/pnr/${pnrId}/hotels`;
             
             console.log('Sending hotel assignment to:', url);
@@ -1667,7 +1667,7 @@ const assignRoomNumber = async (
             setPnrLoading(true);
             setPnrError("");
             console.log(`Fetching PNR passengers for lead ID: ${id}`);
-            const response = await fetch(`http://localhost:5000/api/hotels/done-passengers/lead/${id}`);
+            const response = await fetch(`https://hrbklive.vercel.app/api/hotels/done-passengers/lead/${id}`);
             const data = await response.json();
 
             if (!response.ok) {
@@ -1713,7 +1713,7 @@ const assignRoomNumber = async (
     const fetchAvailableHotels = async () => {
         try {
             setHotelsLoading(true);
-            const response = await fetch('http://localhost:5000/api/vendors/hotels');
+            const response = await fetch('https://hrbklive.vercel.app/api/vendors/hotels');
             const data = await response.json();
             
             if (!response.ok) {

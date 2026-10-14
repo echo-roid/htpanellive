@@ -23,7 +23,7 @@ export default function CheckInOutButton({ onUpdate }) {
   useEffect(() => {
     async function fetchLeaveSettings() {
       try {
-        const res = await axios.get('http://localhost:5000/api/leave-settings/leave-settings');
+        const res = await axios.get('https://hrbklive.vercel.app/api/leave-settings/leave-settings');
         setLeaveSettings(res.data);
         console.log("✅ Leave settings loaded:", res.data);
       } catch (err) {
@@ -43,7 +43,7 @@ export default function CheckInOutButton({ onUpdate }) {
   const fetchTodayRecord = useCallback(async () => {
     try {
       const today = getTodayDate();
-      const response = await axios.get(`http://localhost:5000/api/attendance?date=${today}`);
+      const response = await axios.get(`https://hrbklive.vercel.app/api/attendance?date=${today}`);
       const record = response.data.find(r => r.employee_id === employeeId);
       setTodayRecord(record || null);
       
@@ -271,8 +271,8 @@ export default function CheckInOutButton({ onUpdate }) {
 
       // Determine endpoint
       const endpoint = type === 'checkin'
-        ? 'http://localhost:5000/api/attendance/check-in'
-        : 'http://localhost:5000/api/attendance/check-out';
+        ? 'https://hrbklive.vercel.app/api/attendance/check-in'
+        : 'https://hrbklive.vercel.app/api/attendance/check-out';
 
       // Make API call
       const response = await axios.post(endpoint, formData, {
@@ -301,7 +301,7 @@ export default function CheckInOutButton({ onUpdate }) {
 
         // Update attendance with status
         if (response.data.id) {
-          await axios.patch(`http://localhost:5000/api/attendance/${response.data.id}`, {
+          await axios.patch(`https://hrbklive.vercel.app/api/attendance/${response.data.id}`, {
             status: status,
             is_half_day: isHalfDay ? 1 : 0,
             half_salary_deduction: halfSalaryDeduction ? 1 : 0,
@@ -358,7 +358,7 @@ export default function CheckInOutButton({ onUpdate }) {
 
           // Update attendance with calculated values
           if (response.data.id) {
-            await axios.patch(`http://localhost:5000/api/attendance/${response.data.id}`, {
+            await axios.patch(`https://hrbklive.vercel.app/api/attendance/${response.data.id}`, {
               check_out: checkOutTime,
               total_hours: totalHours,
               overtime_hours: overtime,

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Roomform from "./RoomForm"
 
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://hrbklive.vercel.app/api";
 
 const CompactRoomTable = () => {
   const [activeTab, setActiveTab] = useState('rooms');

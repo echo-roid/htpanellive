@@ -22,7 +22,7 @@ const CorporateNotifications = () => {
     try {
       setLoading(true);
       const response = await fetch(
-        `http://localhost:5000/api/leave/corporate-events/pending/${user?.employee?.id}`
+        `https://hrbklive.vercel.app/api/leave/corporate-events/pending/${user?.employee?.id}`
       );
       if (!response.ok) throw new Error("Failed to fetch pending events");
       const data = await response.json();
@@ -63,8 +63,8 @@ const CorporateNotifications = () => {
     try {
       const endpoint =
         actionType === "approve"
-          ? `http://localhost:5000/api/leave/corporate-events/${selectedEvent.event_id}/approve`
-          : `http://localhost:5000/api/leave/corporate-events/${selectedEvent.event_id}/reject`;
+          ? `https://hrbklive.vercel.app/api/leave/corporate-events/${selectedEvent.event_id}/approve`
+          : `https://hrbklive.vercel.app/api/leave/corporate-events/${selectedEvent.event_id}/reject`;
 
       const response = await fetch(endpoint, {
         method: "PUT",
