@@ -32,7 +32,7 @@ export default function Header({
 
   const dropdownRef = useRef(null);
   const profileRef = useRef(null);
-
+  console.log(user,":kjkjkjkjkjkjkj")
   /* =========================
      Fetch Reimbursement Notifications
   ========================== */
@@ -153,6 +153,51 @@ export default function Header({
       document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+  /* =========================
+   Profile Avatar with initials fallback
+========================== */
+const ProfileAvatar = ({ user, size = 32 }) => {
+  const [imgError, setImgError] = useState(false);
+
+  const employee = user?.employee;
+  const photo = employee?.photo;
+  const name = (employee?.name || "").trim();
+
+  // Get initials: first letter of first name + first letter of last name
+  const getInitials = (fullName) => {
+    if (!fullName) return "?";
+    const parts = fullName.split(/\s+/).filter(Boolean);
+    if (parts.length === 1) {
+      return parts[0].charAt(0).toUpperCase();
+    }
+    const first = parts[0].charAt(0).toUpperCase();
+    const last = parts[parts.length - 1].charAt(0).toUpperCase();
+    return `${first}${last}`;
+  };
+
+  const initials = getInitials(name);
+  const showInitials = !photo || imgError;
+
+  return (
+    <div
+      className="w-8 h-8 rounded-full border overflow-hidden flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold text-sm select-none"
+      style={{ width: size, height: size }}
+      title={name || "User"}
+    >
+      {showInitials ? (
+        <span>{initials}</span>
+      ) : (
+        <img
+          src={photo}
+          alt={name || "user"}
+          className="w-full h-full object-cover"
+          onError={() => setImgError(true)}
+        />
+      )}
+    </div>
+  );
+};
   /* =========================
      Check if notifications exist
   ========================== */
@@ -335,57 +380,52 @@ export default function Header({
             </div>
 
             {/* Profile */}
-            <div className="relative" ref={profileRef}>
-              <div
-                className="flex items-center gap-3 px-3 py-2 rounded-full shadow-md hover:shadow-lg transition cursor-pointer"
-                onClick={() =>
-                  setDropdownOpenForSide(!dropdownOpenforside)
-                }
-              >
-                <img
-                  src={user?.employee?.photo}
-                  className="w-8 h-8 rounded-full object-cover border"
-                  alt="user"
-                />
-              </div>
+           {/* Profile */}
+<div className="relative" ref={profileRef}>
+  <div
+    className="flex items-center gap-3 px-3 py-2 rounded-full shadow-md hover:shadow-lg transition cursor-pointer"
+    onClick={() => setDropdownOpenForSide(!dropdownOpenforside)}
+  >
+    <ProfileAvatar user={user} />
+  </div>
 
-              {dropdownOpenforside && (
-                <div className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl border z-50 animate-fadeIn">
-                  <ul className="text-sm text-gray-600">
-                    <li
-                      className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setProfileselector(true);
-                        setDropdownOpenForSide(false);
-                      }}
-                    >
-                      Profile
-                    </li>
-                    <li
-                      className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
-                      onClick={() => {
-                        setProfileselector(false);
-                        setDropdownOpenForSide(false);
-                      }}
-                    >
-                      My Work
-                    </li>
-                    <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                      <Link to="/EmployeesAttadance">Attendance</Link>
-                    </li>
-                    <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
-                      Settings
-                    </li>
-                    <li
-                      className="px-4 py-3 hover:bg-red-50 text-red-500 cursor-pointer"
-                      onClick={() => navigate("/login")}
-                    >
-                      Logout
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
+  {dropdownOpenforside && (
+    <div className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl border z-50 animate-fadeIn">
+      <ul className="text-sm text-gray-600">
+        <li
+          className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setProfileselector(true);
+            setDropdownOpenForSide(false);
+          }}
+        >
+          Profile
+        </li>
+        <li
+          className="px-4 py-3 hover:bg-gray-100 cursor-pointer"
+          onClick={() => {
+            setProfileselector(false);
+            setDropdownOpenForSide(false);
+          }}
+        >
+          My Work
+        </li>
+        <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+          <Link to="/EmployeesAttadance">Attendance</Link>
+        </li>
+        <li className="px-4 py-3 hover:bg-gray-100 cursor-pointer">
+          Settings
+        </li>
+        <li
+          className="px-4 py-3 hover:bg-red-50 text-red-500 cursor-pointer"
+          onClick={() => navigate("/login")}
+        >
+          Logout
+        </li>
+      </ul>
+    </div>
+  )}
+</div>
           </div>
         </div>
       </header>
