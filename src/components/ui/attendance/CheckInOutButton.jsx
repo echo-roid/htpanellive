@@ -660,7 +660,7 @@ import {
   FaExclamationTriangle,
 } from 'react-icons/fa';
 
-const API_BASE = 'https://hrbklive.vercel.app';
+const API_BASE = 'https://hrbklive.vercel.app/api';
 
 // ======================================================
 // Normalizers — make the UI resilient to both
